@@ -1,0 +1,60 @@
+{% load static %}
+<header class="section-header">
+  <div class="container py-3">
+    <div class="row align-items-center">
+      <!-- Logo -->
+      <div class="col-lg-2 col-md-3 col-6">
+        <a href="{% url 'home' %}" class="brand-wrap d-inline-block">
+          <img class="logo" src="{% static 'images/logo.png' %}?v=5" style="max-height: 52px; height: 52px; object-fit: contain;">
+        </a>
+      </div>
+
+      <!-- Search Bar (Pill shape, Search icon on the right) -->
+      <div class="col-lg-5 d-none d-lg-block">
+        <form action="{% url 'search' %}" class="search-form" method="GET">
+          <div class="search-input-wrap">
+            <input type="text" class="search-input" placeholder="Search for shoes, clothes and more..." name="keyword">
+            <button type="submit" class="search-btn">
+              <i class="fa fa-search"></i>
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Header Navigation Links -->
+      <div class="col-lg-5 col-md-9 col-6">
+        <div class="d-flex justify-content-end align-items-center">
+          <div class="nav-links-group mr-4 d-none d-md-flex">
+            <a href="{% url 'store' %}" class="nav-action-link mx-3">Store</a>
+            <a href="#" class="nav-action-link mx-3">About Us</a>
+            <a href="#" class="nav-action-link mx-3">Contact</a>
+          </div>
+
+          <!-- User Sign In / Account -->
+          <div class="user-action-wrap mr-4">
+            {% if user.id is not None %}
+              <a href="{% url 'dashboard' %}" class="nav-action-link">
+                <i class="far fa-user mr-1"></i> Account
+              </a>
+              <a href="{% url 'logout' %}" class="logout-link ml-2 small">Logout</a>
+            {% else %}
+              <a href="{% url 'login' %}" class="nav-action-link">
+                <i class="far fa-user mr-1"></i> Sign in
+              </a>
+            {% endif %}
+          </div>
+
+          <!-- Cart Bag -->
+          <a href="{% url 'cart' %}" class="cart-action-btn">
+            <i class="fa fa-shopping-cart mr-2"></i> Cart
+            {% if cart_count > 0 %}
+              <span class="cart-pill-badge ml-1">{{ cart_count }}</span>
+            {% else %}
+              <span class="cart-pill-badge ml-1">0</span>
+            {% endif %}
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>

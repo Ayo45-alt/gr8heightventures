@@ -1,0 +1,165 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load humanize %}
+{% block content %}
+
+<!-- ========================= SEAMLESS PRODUCT HERO SECTION ========================= -->
+<section class="section-hero-product d-flex align-items-center">
+  <div class="container py-5 hero-container">
+    <div class="row align-items-center">
+      <!-- Left Column: Content -->
+      <div class="col-lg-6 col-md-12 col-12 text-left hero-content-col">
+        <!-- Subtitle -->
+        <span class="hero-subtitle mb-2 d-inline-block">WELCOME TO KEMI'S SHOP</span>
+        
+        <!-- Main Title -->
+        <h1 class="hero-product-title mb-3">
+          Find something<br>you’ll love.
+          <!-- Custom outline heart icon -->
+          <svg class="heart-outline-svg" viewBox="0 0 24 24" width="34" height="34">
+            <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" fill="none" stroke="#FF6F59" stroke-width="1.5"/>
+          </svg>
+        </h1>
+        
+        <!-- Description -->
+        <p class="hero-product-sub mb-4">Shoes & clothes, available now.<br>Simple pieces. Good quality. Just for you.</p>
+        
+        <!-- Action Button -->
+        <a href="{% url 'store' %}" class="btn btn-primary btn-lg hero-action-btn mb-5">
+          Shop Collection <i class="fa fa-arrow-right ml-2" style="font-size: 14px;"></i>
+        </a>
+
+        <!-- Feature Row -->
+        <div class="hero-features-row d-flex align-items-center">
+          <div class="feature-item d-flex align-items-center mr-4">
+            <span class="feature-icon mr-2">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#FF6F59" stroke-width="1.8">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                <path d="M9 11l2 2 4-4"/>
+              </svg>
+            </span>
+            <div>
+              <h5 class="feature-title mb-0">Quality You Can Trust</h5>
+              <span class="feature-sub">Carefully selected</span>
+            </div>
+          </div>
+          <div class="feature-item d-flex align-items-center">
+            <span class="feature-icon mr-2">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#FF6F59" stroke-width="1.8">
+                <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/>
+              </svg>
+            </span>
+            <div>
+              <h5 class="feature-title mb-0">Hassle Free Shopping</h5>
+              <span class="feature-sub">Easy returns</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Right Column: Transparent Product Composition -->
+      <div class="col-lg-6 col-md-12 col-12 text-center hero-image-col">
+        <img src="{% static 'images/banners/hero_shoes_transparent.png' %}?v=3" class="hero-shoes-img img-fluid" alt="Kemi's Shop Shoes Collection">
+      </div>
+    </div>
+  </div>
+</section>
+<!-- ========================= HERO SECTION END ========================= -->
+
+<!-- ========================= SHOP BY CATEGORY ========================= -->
+<section class="section-category-cards py-5">
+  <div class="container text-center">
+    <h3 class="section-heading-title mb-4">Shop by Category</h3>
+    
+    <div class="row justify-content-center">
+      {% for cat in links %}
+        {% if cat.slug == 'shoes' %}
+          <!-- Shoes Card -->
+          <div class="col-md-6 col-12 mb-4">
+            <div class="category-card shoes-card d-flex align-items-center justify-content-between p-4">
+              <div class="card-left text-left">
+                <span class="card-badge-icon mb-3 d-inline-flex align-items-center justify-content-center">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#2D3142" stroke-width="1.8">
+                    <path d="M3 17 Q7 17 10 12 T20 6 L21 6 L21 8 Q20 12 16 17 Z"/>
+                    <path d="M20 6 L20 17"/>
+                  </svg>
+                </span>
+                <h4 class="card-title">Shoes</h4>
+                <p class="card-sub mb-4">Heels, sneakers, sandals<br>and more</p>
+                <a href="{{ cat.get_url }}" class="btn-card-link">Shop Shoes <i class="fa fa-arrow-right ml-1"></i></a>
+              </div>
+              <div class="card-right">
+                <img src="{{ cat.cat_image.url }}?v=2" class="category-card-img" alt="Shop Shoes">
+              </div>
+            </div>
+          </div>
+        {% endif %}
+        {% if cat.slug == 'shirts' %}
+          <!-- Clothes Card -->
+          <div class="col-md-6 col-12 mb-4">
+            <div class="category-card clothes-card d-flex align-items-center justify-content-between p-4">
+              <div class="card-left text-left">
+                <span class="card-badge-icon mb-3 d-inline-flex align-items-center justify-content-center">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#2D3142" stroke-width="1.8">
+                    <path d="M20.37 4.65L12 1.05 3.63 4.65l1.6 3.2L12 6.45l6.77 1.4 1.6-3.2z"/>
+                    <path d="M12 6.45v13.5M3.63 8.35v6.5l8.37 4.05 8.37-4.05v-6.5"/>
+                  </svg>
+                </span>
+                <h4 class="card-title">Clothes</h4>
+                <p class="card-sub mb-4">Tops, dresses, jeans<br>and more</p>
+                <a href="{{ cat.get_url }}" class="btn-card-link">Shop Clothes <i class="fa fa-arrow-right ml-1"></i></a>
+              </div>
+              <div class="card-right">
+                <img src="{{ cat.cat_image.url }}?v=2" class="category-card-img" alt="Shop Clothes">
+              </div>
+            </div>
+          </div>
+        {% endif %}
+      {% endfor %}
+    </div>
+  </div>
+</section>
+<!-- ========================= SHOP BY CATEGORY END ========================= -->
+
+<!-- ========================= NEW ARRIVALS ========================= -->
+<section class="section-products py-4">
+  <div class="container">
+    <header class="section-heading d-flex justify-content-between align-items-center mb-4">
+      <h3 class="section-title mb-0">New Arrivals</h3>
+      <a href="{% url 'store' %}" class="view-all-link">View all <i class="fa fa-arrow-right ml-1"></i></a>
+    </header>
+
+    <div class="row">
+      {% for product in products %}
+        <div class="col-lg-3 col-md-4 col-6 mb-4">
+          <div class="custom-product-card">
+            <!-- Wishlist Image Container -->
+            <div class="product-img-container position-relative">
+              <a href="{{ product.get_url }}" class="w-100 h-100 d-flex align-items-center justify-content-center">
+                <img src="{{ product.images.url }}" class="product-img img-fluid">
+              </a>
+              <button class="wishlist-btn">
+                <i class="far fa-heart"></i>
+              </button>
+            </div>
+            
+            <!-- Details below -->
+            <div class="product-details">
+              <a href="{{ product.get_url }}" class="product-name-link">{{ product.product_name }}</a>
+              <div class="product-price-row d-flex justify-content-between align-items-center mt-1">
+                <span class="product-price">₦{{ product.price|floatformat:0|intcomma }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      {% empty %}
+        <div class="col-12 text-center py-5">
+          <p class="text-muted">No products available at the moment.</p>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+<!-- ========================= NEW ARRIVALS END ========================= -->
+
+{% endblock %}
