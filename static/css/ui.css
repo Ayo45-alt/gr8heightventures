@@ -1698,13 +1698,19 @@ body {
 
 .hero-shoes-img {
   position: absolute !important;
-  bottom: -65px !important; /* SPILL OUT overlapping effect! Breaks through bottom border by 65px! */
-  left: -24% !important; /* Shift LEFT to align white sandals next to CTA, matching mockup */
-  width: 145% !important; /* Render it larger and more prominent */
-  max-width: 920px !important;
+  bottom: -115px !important; /* Step down onto the page! Breaks through bottom border cleanly */
+  left: -14% !important; /* Balanced placement so sandals & sneakers sit over hero edge */
+  width: 135% !important;
+  max-width: 880px !important;
   height: auto !important;
-  filter: drop-shadow(0 20px 35px rgba(0, 0, 0, 0.14)) !important; /* Deep drop shadow outlining the shoe shapes */
-  z-index: 15 !important; /* Sit on top of borders and next section */
+  filter: drop-shadow(0 25px 40px rgba(0, 0, 0, 0.16)) !important; /* Realistic ground drop-shadow */
+  z-index: 15 !important; /* Sit on top of section border and background */
+}
+
+.section-category-cards {
+  padding-top: 110px !important; /* Give room for the shoes stepping onto the section background */
+  position: relative !important;
+  z-index: 5 !important;
 }
 
 @media (max-width: 991px) {
