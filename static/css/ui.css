@@ -1679,16 +1679,22 @@ body {
   padding: 30px 0 !important;
 }
 
+/* Header Match */
+.section-header {
+  background-color: #F6EFE6 !important;
+  border-bottom: 1px solid rgba(234, 227, 213, 0.4) !important;
+}
+
 /* Product-focused Editorial Hero Section */
 .section-hero-product {
-  background: linear-gradient(135deg, #EFE1C9 0%, #F6ECDD 45%, #FBF6EE 100%) !important; /* Warm studio-backdrop gradient, matching the shoe platform tones */
+  background-color: #F6EFE6 !important; /* Seamless luxury warm cream matching reference mockup */
   width: 100% !important;
   min-height: 520px !important;
   display: flex !important;
   align-items: center !important;
-  border-bottom: 1px solid #EAE3D5 !important;
+  border-bottom: none !important; /* Remove harsh line border */
   position: relative !important;
-  overflow: visible !important; /* Allow the shoes to spill out of the hero section bottom border! */
+  overflow: visible !important;
 }
 
 .hero-image-col {
@@ -1698,17 +1704,18 @@ body {
 
 .hero-shoes-img {
   position: absolute !important;
-  bottom: -115px !important; /* Step down onto the page! Breaks through bottom border cleanly */
-  left: -14% !important; /* Balanced placement so sandals & sneakers sit over hero edge */
-  width: 135% !important;
-  max-width: 880px !important;
+  top: -58px !important;
+  right: -26.7% !important;
+  left: auto !important;
+  width: 175% !important;
+  max-width: 1100px !important;
   height: auto !important;
-  filter: drop-shadow(0 25px 40px rgba(0, 0, 0, 0.16)) !important; /* Realistic ground drop-shadow */
-  z-index: 15 !important; /* Sit on top of section border and background */
+  filter: drop-shadow(0 15px 30px rgba(0, 0, 0, 0.08)) !important;
+  z-index: 15 !important;
 }
 
 .section-category-cards {
-  padding-top: 110px !important; /* Give room for the shoes stepping onto the section background */
+  padding-top: 110px !important;
   position: relative !important;
   z-index: 5 !important;
 }
