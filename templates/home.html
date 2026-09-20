@@ -79,9 +79,11 @@
             <div class="category-card shoes-card d-flex align-items-center justify-content-between p-4">
               <div class="card-left text-left">
                 <span class="card-badge-icon mb-3 d-inline-flex align-items-center justify-content-center">
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#2D3142" stroke-width="1.8">
-                    <path d="M3 17 Q7 17 10 12 T20 6 L21 6 L21 8 Q20 12 16 17 Z"/>
-                    <path d="M20 6 L20 17"/>
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#2D3142" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M2 18h20v-2c0-2-2-4-4-4h-4l-3-4H7L4 12H2v6z"/>
+                    <path d="M7 12v3"/>
+                    <path d="M10 12v3"/>
+                    <path d="M13 12v3"/>
                   </svg>
                 </span>
                 <h4 class="card-title">Shoes</h4>
@@ -89,18 +91,22 @@
                 <a href="{{ cat.get_url }}" class="btn-card-link">Shop Shoes <i class="fa fa-arrow-right ml-1"></i></a>
               </div>
               <div class="card-right">
-                <img src="{{ cat.cat_image.url }}?v=2" class="category-card-img" alt="Shop Shoes">
+                {% if cat.cat_image %}
+                  <img src="{{ cat.cat_image.url }}?v=4" class="category-card-img" alt="Shop Shoes">
+                {% else %}
+                  <img src="{% static 'images/banners/shoes_category.png' %}?v=4" class="category-card-img" alt="Shop Shoes">
+                {% endif %}
               </div>
             </div>
           </div>
         {% endif %}
-        {% if cat.slug == 'shirts' %}
+        {% if cat.slug == 'shirts' or cat.slug == 'clothes' %}
           <!-- Clothes Card -->
           <div class="col-md-6 col-12 mb-4">
             <div class="category-card clothes-card d-flex align-items-center justify-content-between p-4">
               <div class="card-left text-left">
                 <span class="card-badge-icon mb-3 d-inline-flex align-items-center justify-content-center">
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#2D3142" stroke-width="1.8">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#2D3142" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M20.37 4.65L12 1.05 3.63 4.65l1.6 3.2L12 6.45l6.77 1.4 1.6-3.2z"/>
                     <path d="M12 6.45v13.5M3.63 8.35v6.5l8.37 4.05 8.37-4.05v-6.5"/>
                   </svg>
@@ -110,7 +116,11 @@
                 <a href="{{ cat.get_url }}" class="btn-card-link">Shop Clothes <i class="fa fa-arrow-right ml-1"></i></a>
               </div>
               <div class="card-right">
-                <img src="{{ cat.cat_image.url }}?v=2" class="category-card-img" alt="Shop Clothes">
+                {% if cat.cat_image %}
+                  <img src="{{ cat.cat_image.url }}?v=4" class="category-card-img" alt="Shop Clothes">
+                {% else %}
+                  <img src="{% static 'images/banners/clothes_category.png' %}?v=4" class="category-card-img" alt="Shop Clothes">
+                {% endif %}
               </div>
             </div>
           </div>
@@ -133,13 +143,19 @@
       {% for product in products %}
         <div class="col-lg-3 col-md-4 col-6 mb-4">
           <div class="custom-product-card">
-            <!-- Wishlist Image Container -->
+            <!-- Product Image Container with Wishlist Button -->
             <div class="product-img-container position-relative">
               <a href="{{ product.get_url }}" class="w-100 h-100 d-flex align-items-center justify-content-center">
-                <img src="{{ product.images.url }}" class="product-img img-fluid">
+                {% if product.images %}
+                  <img src="{{ product.images.url }}" class="product-img img-fluid" alt="{{ product.product_name }}">
+                {% else %}
+                  <img src="{% static 'images/items/1.jpg' %}" class="product-img img-fluid" alt="{{ product.product_name }}">
+                {% endif %}
               </a>
-              <button class="wishlist-btn">
-                <i class="far fa-heart"></i>
+              <button class="wishlist-btn" title="Add to Wishlist">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                </svg>
               </button>
             </div>
             
@@ -153,8 +169,89 @@
           </div>
         </div>
       {% empty %}
-        <div class="col-12 text-center py-5">
-          <p class="text-muted">No products available at the moment.</p>
+        <!-- Placeholder Product Cards shown until backend products are populated -->
+        <div class="col-lg-3 col-md-4 col-6 mb-4">
+          <div class="custom-product-card">
+            <div class="product-img-container position-relative">
+              <a href="{% url 'store' %}" class="w-100 h-100 d-flex align-items-center justify-content-center">
+                <img src="{% static 'images/banners/shoes_category.png' %}" class="product-img img-fluid" alt="Rhinestone Stiletto Sandal">
+              </a>
+              <button class="wishlist-btn" title="Add to Wishlist">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                </svg>
+              </button>
+            </div>
+            <div class="product-details">
+              <a href="{% url 'store' %}" class="product-name-link">Stiletto Sandal</a>
+              <div class="product-price-row d-flex justify-content-between align-items-center mt-1">
+                <span class="product-price">₦25,000</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-3 col-md-4 col-6 mb-4">
+          <div class="custom-product-card">
+            <div class="product-img-container position-relative">
+              <a href="{% url 'store' %}" class="w-100 h-100 d-flex align-items-center justify-content-center">
+                <img src="{% static 'images/items/1.jpg' %}" class="product-img img-fluid" alt="Classic White Sneaker">
+              </a>
+              <button class="wishlist-btn" title="Add to Wishlist">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                </svg>
+              </button>
+            </div>
+            <div class="product-details">
+              <a href="{% url 'store' %}" class="product-name-link">Classic White Sneaker</a>
+              <div class="product-price-row d-flex justify-content-between align-items-center mt-1">
+                <span class="product-price">₦18,500</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-3 col-md-4 col-6 mb-4">
+          <div class="custom-product-card">
+            <div class="product-img-container position-relative">
+              <a href="{% url 'store' %}" class="w-100 h-100 d-flex align-items-center justify-content-center">
+                <img src="{% static 'images/items/2.jpg' %}" class="product-img img-fluid" alt="Striped Knit Top">
+              </a>
+              <button class="wishlist-btn" title="Add to Wishlist">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                </svg>
+              </button>
+            </div>
+            <div class="product-details">
+              <a href="{% url 'store' %}" class="product-name-link">Striped Knit Top</a>
+              <div class="product-price-row d-flex justify-content-between align-items-center mt-1">
+                <span class="product-price">₦12,000</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-3 col-md-4 col-6 mb-4">
+          <div class="custom-product-card">
+            <div class="product-img-container position-relative">
+              <a href="{% url 'store' %}" class="w-100 h-100 d-flex align-items-center justify-content-center">
+                <img src="{% static 'images/items/3.jpg' %}" class="product-img img-fluid" alt="Leather Ankle Boot">
+              </a>
+              <button class="wishlist-btn" title="Add to Wishlist">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                </svg>
+              </button>
+            </div>
+            <div class="product-details">
+              <a href="{% url 'store' %}" class="product-name-link">Leather Ankle Boot</a>
+              <div class="product-price-row d-flex justify-content-between align-items-center mt-1">
+                <span class="product-price">₦32,000</span>
+              </div>
+            </div>
+          </div>
         </div>
       {% endfor %}
     </div>

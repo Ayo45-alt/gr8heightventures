@@ -1585,32 +1585,33 @@ body {
   text-decoration: none !important;
 }
 
-/* Premium Custom Product Cards (Stylo/Clyra Layout) */
+/* Premium Custom Product Cards (Matching Reference Mockup Layout) */
 .custom-product-card {
   background: transparent !important;
   border: none !important;
   box-shadow: none !important;
-  margin-bottom: 10px !important;
+  margin-bottom: 15px !important;
   display: flex !important;
   flex-direction: column !important;
 }
 .product-img-container {
-  background-color: #ffffff !important;
-  border-radius: 28px !important;
+  background-color: #F5F2EC !important; /* Soft warm cream background card */
+  border-radius: 20px !important;
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
   aspect-ratio: 1 / 1 !important;
   overflow: hidden !important;
-  padding: 24px !important;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.02) !important;
+  padding: 20px !important;
+  position: relative !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.02) !important;
   transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1) !important;
   width: 100% !important;
   text-decoration: none !important;
 }
 .product-img-container:hover {
-  transform: translateY(-6px) !important;
-  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.05) !important;
+  transform: translateY(-5px) !important;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.06) !important;
 }
 .product-img {
   max-height: 85% !important;
@@ -1622,15 +1623,41 @@ body {
   transform: scale(1.06) !important;
 }
 
+/* Wishlist Button Overlay on Product Cards */
+.wishlist-btn {
+  position: absolute !important;
+  top: 12px !important;
+  right: 12px !important;
+  width: 32px !important;
+  height: 32px !important;
+  border-radius: 50% !important;
+  background-color: #ffffff !important;
+  border: none !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  color: #64748B !important;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.06) !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+  z-index: 5 !important;
+  outline: none !important;
+}
+.wishlist-btn:hover {
+  color: #FF6F59 !important;
+  transform: scale(1.1) !important;
+  background-color: #ffffff !important;
+}
+
 /* Product Details */
 .product-details {
-  padding-top: 14px !important;
+  padding-top: 10px !important;
 }
 .product-name-link {
   font-family: 'Outfit', sans-serif !important;
-  font-size: 16px !important;
-  font-weight: 500 !important;
-  color: #2D3142 !important;
+  font-size: 15px !important;
+  font-weight: 600 !important;
+  color: #1E2229 !important;
   text-decoration: none !important;
   display: block !important;
   overflow: hidden !important;
@@ -1644,7 +1671,7 @@ body {
 }
 .product-price {
   font-family: 'Outfit', sans-serif !important;
-  font-size: 18px !important;
+  font-size: 16px !important;
   font-weight: 700 !important;
   color: #1E2229 !important;
 }
@@ -1834,19 +1861,20 @@ body {
   min-height: 260px !important; /* Increased height to fit all content comfortably */
   transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1) !important;
   overflow: hidden !important;
-  border: none !important;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.01) !important;
+  border: 2px solid transparent !important;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.03) !important;
   position: relative !important;
 }
 .category-card:hover {
   transform: translateY(-5px) !important;
-  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.04) !important;
+  border-color: #1E2229 !important; /* Dark outline on hover */
+  box-shadow: 0 16px 36px rgba(30, 34, 41, 0.15) !important;
 }
 .shoes-card {
-  background-color: #FDF6F0 !important; /* Soft pink-cream background */
+  background-color: #F3E0D2 !important; /* Richer, darker warm peach-beige background */
 }
 .clothes-card {
-  background-color: #EEF2F6 !important; /* Soft blue-grey background */
+  background-color: #D7E3F0 !important; /* Richer, darker soft blue-grey background */
 }
 .card-left {
   flex: 1 !important;
