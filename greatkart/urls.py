@@ -22,6 +22,12 @@ from django.conf.urls.static import static
 from django.views.static import serve
 
 
+def cached_serve(request, path, document_root=None, show_indexes=False):
+    response = serve(request, path, document_root=document_root, show_indexes=show_indexes)
+    response['Cache-Control'] = 'public, max-age=31536000, s-maxage=31536000, immutable'
+    return response
+
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', views.home, name='home'),
@@ -40,8 +46,8 @@ urlpatterns = [
     path('privacy/', views.privacy, name='privacy'),
     path('terms/', views.terms, name='terms'),
 
-    # Serve media & static files on Vercel / production
-    re_path(r'^media/(?P<path>.*)$', serve, {'document_root': settings.MEDIA_ROOT}),
-    re_path(r'^static/(?P<path>.*)$', serve, {'document_root': settings.BASE_DIR / 'static'}),
+    # Serve media & static files on Vercel / production with Edge CDN caching
+    re_path(r'^media/(?P<path>.*)$', cached_serve, {'document_root': settings.MEDIA_ROOT}),
+    re_path(r'^static/(?P<path>.*)$', cached_serve, {'document_root': settings.BASE_DIR / 'static'}),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
