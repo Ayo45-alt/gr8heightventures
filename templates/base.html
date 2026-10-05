@@ -4,17 +4,16 @@
 <head>
 <meta charset="utf-8">
 <meta http-equiv="pragma" content="no-cache" />
-<meta http-equiv="cache-control" content="max-age=604800" />
+<meta http-equiv="cache-control" content="no-cache, no-store, must-revalidate" />
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
 <title>Kemi's Shop | Online Store for Clothes & Shoes</title>
 
-<!-- Google Fonts -->
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet">
+<!-- Google Fonts (non-blocking so offline browsers never hang) -->
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
 
-<link href="{% static 'images/favicon.ico' %}" rel="shortcut icon" type="image/x-icon">
+<link href="{% static 'images/favicon.png' %}?v=7" rel="icon" type="image/png">
+<link href="{% static 'images/favicon.ico' %}?v=7" rel="shortcut icon" type="image/x-icon">
 
 <!-- jQuery -->
 <script src="{% static 'js/jquery-2.0.0.min.js' %}" type="text/javascript"></script>
@@ -27,8 +26,8 @@
 <link href="{% static 'fonts/fontawesome/css/all.min.css' %}" type="text/css" rel="stylesheet">
 
 <!-- custom style -->
-<link href="{% static 'css/ui.css' %}?v=15" rel="stylesheet" type="text/css"/>
-<link href="{% static 'css/responsive.css' %}" rel="stylesheet" media="only screen and (max-width: 1200px)" />
+<link href="{% static 'css/ui.css' %}?v=53" rel="stylesheet" type="text/css"/>
+<link href="{% static 'css/responsive.css' %}?v=40" rel="stylesheet" media="only screen and (max-width: 1200px)" />
 
 <!-- custom javascript -->
 <script src="{% static 'js/script.js' %}" type="text/javascript"></script>
@@ -38,8 +37,51 @@
 
 // jquery ready start
 $(document).ready(function() {
-    // jQuery code
+    $(document).on('click', '.wishlist-toggle-btn', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        var btn = $(this);
+        var productId = btn.data('product-id');
+        if (!productId) return;
 
+        $.ajax({
+            url: '/store/wishlist/toggle/' + productId + '/',
+            type: 'GET',
+            success: function(data) {
+                $('.wishlist-toggle-btn[data-product-id="' + productId + '"]').each(function() {
+                    var b = $(this);
+                    var svg = b.find('svg');
+                    var icon = b.find('i');
+                    if (data.in_wishlist) {
+                        b.addClass('active in-wishlist');
+                        if (svg.length) {
+                            svg.attr('fill', '#e74c3c');
+                            svg.attr('stroke', '#e74c3c');
+                        }
+                        if (icon.length) {
+                            icon.removeClass('far fa-heart').addClass('fas fa-heart text-danger');
+                        }
+                    } else {
+                        b.removeClass('active in-wishlist');
+                        if (svg.length) {
+                            svg.attr('fill', 'none');
+                            svg.attr('stroke', '#8F95A3');
+                        }
+                        if (icon.length) {
+                            icon.removeClass('fas fa-heart text-danger').addClass('far fa-heart');
+                        }
+                    }
+                });
+
+                if ($('#wishlist-badge').length) {
+                    $('#wishlist-badge').text(data.wishlist_count);
+                }
+            },
+            error: function(xhr) {
+                console.error('Wishlist toggle error:', xhr);
+            }
+        });
+    });
 }); 
 // jquery end
 </script>

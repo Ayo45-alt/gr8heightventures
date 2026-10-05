@@ -1,16 +1,29 @@
 {% load static %}
-<header class="section-header">
-  <div class="container py-3">
+{% if request.path != '/' %}
+<!-- ========================= TOP ANNOUNCEMENT BAR ========================= -->
+<div class="top-announcement-bar py-2 text-center">
+  <div class="container d-flex justify-content-center align-items-center">
+    <span class="announcement-text">
+      <i class="fab fa-whatsapp mr-1" style="color: #25D366;"></i> WhatsApp Orders: <a href="https://wa.me/2348130707949" target="_blank" class="text-white font-weight-bold"><strong>+234 813 070 7949</strong></a>
+      <span class="d-none d-md-inline"><span class="mx-3 announcement-sep">|</span> Authentic US & UK Designer Fashion <span class="mx-3 announcement-sep">|</span> Nationwide Delivery</span>
+    </span>
+  </div>
+</div>
+{% endif %}
+
+<!-- ========================= MAIN HEADER ========================= -->
+<header class="section-header {% if request.path == '/' %}header-over-hero{% endif %}">
+  <div class="container py-2 py-md-3">
     <div class="row align-items-center">
       <!-- Logo -->
-      <div class="col-lg-2 col-md-3 col-6">
+      <div class="col-lg-2 col-md-3 col-5">
         <a href="{% url 'home' %}" class="brand-wrap d-inline-block">
-          <img class="logo" src="{% static 'images/logo.png' %}?v=5" style="max-height: 52px; height: 52px; object-fit: contain;">
+          <img class="logo" src="{% static 'images/logo.png' %}?v=5" alt="Kemi's Shop" style="max-height: 42px; height: 42px; object-fit: contain;">
         </a>
       </div>
 
-      <!-- Search Bar (Pill shape, Search icon on the right) -->
-      <div class="col-lg-5 d-none d-lg-block">
+      <!-- Desktop Search Bar -->
+      <div class="col-lg-4 col-md-5 d-none d-md-block">
         <form action="{% url 'search' %}" class="search-form" method="GET">
           <div class="search-input-wrap">
             <input type="text" class="search-input" placeholder="Search for shoes, clothes and more..." name="keyword">
@@ -21,40 +34,61 @@
         </form>
       </div>
 
-      <!-- Header Navigation Links -->
-      <div class="col-lg-5 col-md-9 col-6">
+      <!-- Header Navigation Links & Action Icons -->
+      <div class="col-lg-6 col-md-4 col-7">
         <div class="d-flex justify-content-end align-items-center">
-          <div class="nav-links-group mr-4 d-none d-md-flex">
-            <a href="{% url 'store' %}" class="nav-action-link mx-3">Store</a>
-            <a href="#" class="nav-action-link mx-3">About Us</a>
-            <a href="#" class="nav-action-link mx-3">Contact</a>
+          <!-- Desktop Text Links -->
+          <div class="nav-links-group mr-4 d-none d-lg-flex align-items-center">
+            <a href="{% url 'home' %}" class="nav-action-link mx-2">Home</a>
+            <a href="{% url 'store' %}" class="nav-action-link mx-2">Shop</a>
+            <a href="{% url 'about' %}" class="nav-action-link mx-2">About</a>
+            <a href="{% url 'contact' %}" class="nav-action-link mx-2">Contact</a>
           </div>
 
-          <!-- User Sign In / Account -->
-          <div class="user-action-wrap mr-4">
-            {% if user.id is not None %}
-              <a href="{% url 'dashboard' %}" class="nav-action-link">
-                <i class="far fa-user mr-1"></i> Account
-              </a>
-              <a href="{% url 'logout' %}" class="logout-link ml-2 small">Logout</a>
-            {% else %}
-              <a href="{% url 'login' %}" class="nav-action-link">
-                <i class="far fa-user mr-1"></i> Sign in
-              </a>
-            {% endif %}
-          </div>
+          <!-- Utility Icons: Mobile Shop Link, Mobile Search Toggle, Wishlist & Cart -->
+          <div class="header-utility-icons d-flex align-items-center">
+            <!-- Compact Shop link on mobile/tablet -->
+            <a href="{% url 'store' %}" class="d-inline-block d-lg-none font-weight-bold mr-2 px-2 py-1" style="font-size: 0.85rem; color: #13382C; background: rgba(19, 56, 44, 0.08); border-radius: 14px; text-decoration: none;">
+              Shop
+            </a>
 
-          <!-- Cart Bag -->
-          <a href="{% url 'cart' %}" class="cart-action-btn">
-            <i class="fa fa-shopping-cart mr-2"></i> Cart
-            {% if cart_count > 0 %}
-              <span class="cart-pill-badge ml-1">{{ cart_count }}</span>
-            {% else %}
-              <span class="cart-pill-badge ml-1">0</span>
-            {% endif %}
-          </a>
+            <!-- Mobile Search Icon Toggle (< 768px) -->
+            <button type="button" class="btn btn-link p-0 mx-2 d-inline-flex d-md-none nav-utility-icon" onclick="var el=document.getElementById('mobile-search-collapse'); el.classList.toggle('d-none');" title="Search">
+              <i class="fa fa-search" style="font-size: 18px;"></i>
+            </button>
+
+            <!-- Wishlist Heart with Live Badge -->
+            <a href="{% url 'wishlist' %}" class="nav-utility-icon mx-2 position-relative" title="Wishlist">
+              <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+              </svg>
+              <span id="wishlist-badge" class="cart-circle-badge" style="background-color: #d9534f; color: #fff;">{% if wishlist_count %}{{ wishlist_count }}{% else %}0{% endif %}</span>
+            </a>
+
+            <!-- Shopping Bag / Cart with Badge -->
+            <a href="{% url 'cart' %}" class="nav-utility-icon nav-cart-bag ml-2 position-relative" title="Shopping Bag">
+              <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/>
+                <line x1="3" y1="6" x2="21" y2="6"/>
+                <path d="M16 10a4 4 0 0 1-8 0"/>
+              </svg>
+              <span class="cart-circle-badge">{% if cart_count %}{{ cart_count }}{% else %}0{% endif %}</span>
+            </a>
+          </div>
         </div>
       </div>
+    </div>
+
+    <!-- Collapsible Mobile Search Bar (Only opens when Search icon is tapped) -->
+    <div id="mobile-search-collapse" class="d-none d-md-none mt-2">
+      <form action="{% url 'search' %}" class="search-form" method="GET">
+        <div class="search-input-wrap">
+          <input type="text" class="search-input" placeholder="Search shoes, dresses, tops, trousers..." name="keyword" style="height: 36px; font-size: 0.86rem;">
+          <button type="submit" class="search-btn" style="width: 36px; height: 36px;">
+            <i class="fa fa-search"></i>
+          </button>
+        </div>
+      </form>
     </div>
   </div>
 </header>

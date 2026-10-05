@@ -1,0 +1,45 @@
+{% load static %}
+{% load humanize %}
+{% for product in products %}
+<div class="col-lg-3 col-md-4 col-6 mb-4 product-card-col">
+  <div class="custom-product-card">
+    <!-- Product Image Container -->
+    <div class="product-img-container position-relative">
+      <a href="{{ product.get_url }}" class="w-100 h-100 d-flex align-items-center justify-content-center">
+        {% if product.images %}
+          <img src="{{ product.images.url }}" class="product-img img-fluid" alt="{{ product.product_name }}" loading="lazy">
+        {% else %}
+          <img src="{% static 'images/items/1.jpg' %}" class="product-img img-fluid" alt="{{ product.product_name }}" loading="lazy">
+        {% endif %}
+      </a>
+      {% if product.stock <= 0 %}
+        <span class="badge badge-dark position-absolute" style="top: 10px; left: 10px; font-size: 0.72rem; font-weight: 600; background-color: rgba(0,0,0,0.75); z-index: 4;">
+          Sold Out
+        </span>
+      {% endif %}
+    </div>
+
+    <!-- Details below -->
+    <div class="product-details mt-2">
+      <a href="{{ product.get_url }}" class="product-name-link" title="{{ product.product_name }}">{{ product.product_name }}</a>
+      <div class="product-price-row d-flex justify-content-between align-items-center mt-1">
+        <div class="d-flex align-items-center flex-wrap" style="gap: 6px;">
+          <span class="product-price">₦{{ product.price|floatformat:0|intcomma }}</span>
+          {% with sz_count=product.variation_set.sizes.count first_sz=product.variation_set.sizes.first %}
+            {% if first_sz %}
+              <span class="size-pill" style="background: #F4EFE6; border: 1px solid #E5DEC9; border-radius: 6px; padding: 2px 8px; font-weight: 500; font-size: 0.72rem; color: #4A544E; letter-spacing: 0.1px;">
+                {{ first_sz.variation_value }}{% if sz_count > 1 %} +{{ sz_count|add:"-1" }}{% endif %}
+              </span>
+            {% endif %}
+          {% endwith %}
+        </div>
+        <button class="card-wishlist-btn wishlist-toggle-btn {% if product.id in wishlist_product_ids %}in-wishlist active{% endif %}" data-product-id="{{ product.id }}" title="Save to Wishlist">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="{% if product.id in wishlist_product_ids %}#e74c3c{% else %}none{% endif %}" stroke="{% if product.id in wishlist_product_ids %}#e74c3c{% else %}#8F95A3{% endif %}" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+{% endfor %}

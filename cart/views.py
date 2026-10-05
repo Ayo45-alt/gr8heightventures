@@ -1,6 +1,7 @@
+import urllib.parse
 from django.shortcuts import render, redirect
 from store.models import Product, Variation
-from .models import Cart, CartItem
+from .models import Cart, CartItem, get_variation_max_stock
 from django.shortcuts import get_object_or_404
 from django.http import HttpResponse
 from django.core.exceptions import ObjectDoesNotExist
@@ -23,15 +24,25 @@ def add_cart(request, product_id):
             key = item
             value = request.POST[key]
             
-            try:
-                variation = Variation.objects.get(product=product, variation_category__iexact=key, variation_value__iexact=value)
+            if key.lower() in ('color', 'size') and value:
+                variation = Variation.objects.filter(
+                    product=product,
+                    variation_category__iexact=key,
+                    variation_value__iexact=value
+                ).first()
+                if not variation:
+                    variation = Variation.objects.create(
+                        product=product,
+                        variation_category=key.lower(),
+                        variation_value=value,
+                        is_active=True
+                    )
                 product_variation.append(variation)
-            except:
-                pass
+
+    max_qty = get_variation_max_stock(product, product_variation)
 
     # Check if user is authenticated
     if request.user.is_authenticated:
-        # For logged-in users
         is_cart_item_exists = CartItem.objects.filter(product=product, user=request.user).exists()
         
         if is_cart_item_exists:
@@ -48,15 +59,16 @@ def add_cart(request, product_id):
                 index = ex_var_list.index(product_variation)
                 item_id = id[index]
                 item = CartItem.objects.get(product=product, id=item_id)
-                item.quantity += 1
-                item.save()
-            else:
+                if item.quantity < max_qty:
+                    item.quantity += 1
+                    item.save()
+            elif max_qty > 0:
                 item = CartItem.objects.create(product=product, quantity=1, user=request.user)
                 if len(product_variation) > 0:
                     item.variations.clear()
                     item.variations.add(*product_variation)
                 item.save()
-        else:
+        elif max_qty > 0:
             cart_item = CartItem.objects.create(
                 product=product,
                 quantity=1,
@@ -93,15 +105,16 @@ def add_cart(request, product_id):
                 index = ex_var_list.index(product_variation)
                 item_id = id[index]
                 item = CartItem.objects.get(product=product, id=item_id)
-                item.quantity += 1
-                item.save()
-            else:
+                if item.quantity < max_qty:
+                    item.quantity += 1
+                    item.save()
+            elif max_qty > 0:
                 item = CartItem.objects.create(product=product, quantity=1, cart=cart)
                 if len(product_variation) > 0:
                     item.variations.clear()
                     item.variations.add(*product_variation)
                 item.save()
-        else:
+        elif max_qty > 0:
             cart_item = CartItem.objects.create(
                 product=product,
                 quantity=1,
@@ -142,22 +155,35 @@ def remove_cart_item(request, cart_item_id):
 
 def cart(request, total=0, quantity=0, cart_items=None):
     try:
-        tax = 0
-        grand_total = 0
-        
         if request.user.is_authenticated:
-            cart_items = CartItem.objects.filter(user=request.user, is_active=True)
+            cart_items = CartItem.objects.filter(user=request.user, is_active=True).select_related('product')
         else:
             cart = Cart.objects.get(cart_id=_cart_id(request))
-            cart_items = CartItem.objects.filter(cart=cart, is_active=True)
+            cart_items = CartItem.objects.filter(cart=cart, is_active=True).select_related('product')
         
         for cart_item in cart_items:
             total += (cart_item.product.price * cart_item.quantity)
             quantity += cart_item.quantity
-        tax = (2 * total) / 100
-        grand_total = total + tax
     except ObjectDoesNotExist:
-        pass
+        cart_items = []
+
+    tax = 0
+    grand_total = total
+
+    # Format pre-filled WhatsApp message for whole cart
+    if cart_items:
+        lines = ["Hello Kemi's Shop! 👋", "I would like to order the following items from your boutique:\n"]
+        for idx, item in enumerate(cart_items, 1):
+            variations = item.variations.all()
+            var_str = ", ".join([f"{v.variation_category.capitalize()}: {v.variation_value}" for v in variations]) if variations else ""
+            var_info = f" [{var_str}]" if var_str else ""
+            lines.append(f"{idx}. {item.product.product_name}{var_info} x{item.quantity} - ₦{item.product.price * item.quantity:,.0f}")
+        lines.append(f"\nSubtotal: ₦{total:,.0f}")
+        lines.append("Please confirm item availability and delivery arrangements. Thank you!")
+        wa_text = "\n".join(lines)
+        whatsapp_cart_url = f"https://wa.me/2348130707949?text={urllib.parse.quote(wa_text)}"
+    else:
+        whatsapp_cart_url = "https://wa.me/2348130707949"
 
     context = {
         'total': total,
@@ -165,6 +191,7 @@ def cart(request, total=0, quantity=0, cart_items=None):
         'cart_items': cart_items,
         'tax': tax,
         'grand_total': grand_total,
+        'whatsapp_cart_url': whatsapp_cart_url,
     }
     return render(request, 'store/cart.html', context)
 

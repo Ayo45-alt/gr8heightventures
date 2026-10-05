@@ -1,0 +1,141 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<section class="section-pagetop bg-light py-5 border-bottom">
+  <div class="container text-center">
+    <span class="text-uppercase tracking-wider small text-muted font-weight-bold">We'd Love to Hear From You</span>
+    <h1 class="title-page font-weight-bold mt-2 mb-3" style="font-family: 'Playfair Display', Georgia, serif; font-size: 2.4rem;">Contact Kemi's Shop</h1>
+    <p class="lead text-muted mx-auto" style="max-width: 600px;">
+      Have a question about a style, size, or delivery? Reach out to us directly — we are always excited to help you style your perfect look.
+    </p>
+  </div>
+</section>
+
+<section class="section-content py-5">
+  <div class="container">
+    <div class="row">
+      <!-- Contact Details & WhatsApp Banner -->
+      <div class="col-lg-5 mb-4 mb-lg-0">
+        <div class="card border-0 shadow-sm p-4 p-md-5 h-100 bg-white">
+          <h3 class="font-weight-bold mb-4" style="color: #1a3c34;">Get in Touch</h3>
+          
+          <div class="d-flex align-items-start mb-4">
+            <div class="mr-3 mt-1">
+              <span class="badge p-3 rounded-circle text-white" style="background-color: #25D366; font-size: 1.2rem;">
+                <i class="fab fa-whatsapp"></i>
+              </span>
+            </div>
+            <div>
+              <h6 class="font-weight-bold mb-1">WhatsApp Fast Response</h6>
+              <p class="text-muted small mb-2">Instant sizing advice, close-up videos, and quick order placement.</p>
+              <a href="https://wa.me/2348130707949?text=Hello%20Kemi's%20Shop!%20I'm%20reaching%20out%20from%20your%20website." target="_blank" class="btn btn-sm btn-success" style="background-color: #25D366; border-color: #25D366;">
+                <i class="fab fa-whatsapp mr-1"></i> +234 813 070 7949
+              </a>
+            </div>
+          </div>
+
+          <div class="d-flex align-items-start mb-4">
+            <div class="mr-3 mt-1">
+              <span class="badge p-3 rounded-circle text-white bg-dark" style="font-size: 1.2rem;">
+                <i class="fa fa-phone-alt"></i>
+              </span>
+            </div>
+            <div>
+              <h6 class="font-weight-bold mb-1">Direct Phone Call</h6>
+              <p class="text-muted small mb-2">Speak directly with Kemi for inquiries.</p>
+              <a href="tel:+2348130707949" class="text-dark font-weight-bold">+234 813 070 7949</a>
+            </div>
+          </div>
+
+          <div class="d-flex align-items-start mb-4">
+            <div class="mr-3 mt-1">
+              <span class="badge p-3 rounded-circle text-white" style="background-color: #1a3c34; font-size: 1.2rem;">
+                <i class="fa fa-map-marker-alt"></i>
+              </span>
+            </div>
+            <div>
+              <h6 class="font-weight-bold mb-1">Location & Service</h6>
+              <p class="text-muted small mb-0">Lagos, Nigeria</p>
+              <p class="text-muted small mb-0">Nationwide courier delivery across all 36 states.</p>
+            </div>
+          </div>
+
+          <div class="d-flex align-items-start">
+            <div class="mr-3 mt-1">
+              <span class="badge p-3 rounded-circle text-white bg-secondary" style="font-size: 1.2rem;">
+                <i class="fa fa-clock"></i>
+              </span>
+            </div>
+            <div>
+              <h6 class="font-weight-bold mb-1">Customer Service Hours</h6>
+              <p class="text-muted small mb-0">Monday – Saturday: 9:00 AM – 8:00 PM WAT</p>
+              <p class="text-muted small mb-0">Sunday: 1:00 PM – 7:00 PM WAT</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Inquiry Box -->
+      <div class="col-lg-7">
+        <div class="card border-0 shadow-sm p-4 p-md-5 bg-white">
+          <h3 class="font-weight-bold mb-2" style="color: #1a3c34;">Send an Inquiry</h3>
+          <p class="text-muted mb-4">You can fill in your message below, and it will seamlessly open in WhatsApp for an instant response.</p>
+          
+          <form onsubmit="handleInquirySubmit(event)">
+            <div class="form-row">
+              <div class="form-group col-md-6">
+                <label class="font-weight-bold">Your Name</label>
+                <input type="text" id="sender-name" class="form-control" placeholder="e.g. Bukola" required>
+              </div>
+              <div class="form-group col-md-6">
+                <label class="font-weight-bold">Your Phone Number</label>
+                <input type="tel" id="sender-phone" class="form-control" placeholder="e.g. 08012345678">
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="font-weight-bold">Interested In</label>
+              <select id="sender-interest" class="form-control">
+                <option value="Dresses & Gowns">Dresses & Gowns</option>
+                <option value="Luxury Shoes & Heels">Luxury Shoes & Heels</option>
+                <option value="Tops & Blouses">Tops & Blouses</option>
+                <option value="Trousers & Pants">Trousers & Pants</option>
+                <option value="Delivery & Order Status">Delivery & Order Status</option>
+                <option value="General Inquiry">General Inquiry</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label class="font-weight-bold">Your Message</label>
+              <textarea id="sender-message" class="form-control" rows="4" placeholder="Ask about sizes, fit, availability or delivery..." required></textarea>
+            </div>
+
+            <button type="submit" class="btn btn-success btn-lg px-4" style="background-color: #25D366; border-color: #25D366;">
+              <i class="fab fa-whatsapp mr-2"></i> Send to WhatsApp (+234 813 070 7949)
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+function handleInquirySubmit(e) {
+  e.preventDefault();
+  var name = document.getElementById('sender-name').value.trim();
+  var phone = document.getElementById('sender-phone').value.trim();
+  var interest = document.getElementById('sender-interest').value;
+  var msg = document.getElementById('sender-message').value.trim();
+
+  var text = "Hello Kemi's Shop! 👋\n\nName: " + name;
+  if (phone) { text += "\nPhone: " + phone; }
+  text += "\nInquiry Regarding: " + interest;
+  text += "\n\nMessage:\n" + msg;
+
+  var waUrl = "https://wa.me/2348130707949?text=" + encodeURIComponent(text);
+  window.open(waUrl, '_blank');
+}
+</script>
+{% endblock %}

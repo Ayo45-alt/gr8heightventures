@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<section class="section-pagetop bg-light py-5 border-bottom">
+  <div class="container text-center">
+    <span class="text-uppercase tracking-wider small text-muted font-weight-bold">Boutique Lookbook & Showcase</span>
+    <h1 class="title-page font-weight-bold mt-2 mb-3" style="font-family: 'Playfair Display', Georgia, serif; font-size: 2.4rem;">About Kemi's Shop</h1>
+    <p class="lead text-muted mx-auto" style="max-width: 650px;">
+      Curated luxury fashion, handpicked US & UK designer pieces, and personalized boutique styling for the modern woman.
+    </p>
+  </div>
+</section>
+
+<section class="section-content py-5">
+  <div class="container">
+    <div class="row align-items-center mb-5">
+      <div class="col-lg-6 mb-4 mb-lg-0">
+        <div class="p-4 p-md-5 rounded shadow-sm bg-white border">
+          <h2 class="h3 font-weight-bold mb-3" style="color: #1a3c34;">Curated With Passion & Elegance</h2>
+          <p class="text-muted" style="line-height: 1.8;">
+            Welcome to <strong>Kemi's Shop</strong>. We believe that true luxury lies in exceptional tailoring, timeless silhouettes, and authentic craftsmanship. Every single dress, blouse, trouser, and pair of shoes in our collection is personally hand-selected from premier department stores and designer boutiques across the United States and the United Kingdom.
+          </p>
+          <p class="text-muted" style="line-height: 1.8;">
+            From statement evening gowns by Preston & York and Kay Unger, to work-ready tailored separates by Calvin Klein, Gianni Bini, and Gibson & Latimer, our digital showcase provides you with direct access to one-of-a-kind wardrobe treasures.
+          </p>
+          <div class="mt-4">
+            <a href="https://wa.me/2348130707949" target="_blank" class="btn btn-success px-4 py-2" style="background-color: #25D366; border-color: #25D366;">
+              <i class="fab fa-whatsapp mr-2"></i> Chat with Kemi
+            </a>
+            <a href="{% url 'store' %}" class="btn btn-outline-dark px-4 py-2 ml-2">Browse Catalog</a>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-6">
+        <div class="row">
+          <div class="col-6 mb-3">
+            <div class="card border-0 shadow-sm p-4 text-center h-100 bg-white">
+              <i class="fa fa-gem fa-2x mb-3" style="color: #D4AF37;"></i>
+              <h5 class="font-weight-bold">100% Authentic</h5>
+              <p class="small text-muted mb-0">Original US/UK brand tags and verified designer craftsmanship.</p>
+            </div>
+          </div>
+          <div class="col-6 mb-3">
+            <div class="card border-0 shadow-sm p-4 text-center h-100 bg-white">
+              <i class="fa fa-heart fa-2x mb-3" style="color: #e74c3c;"></i>
+              <h5 class="font-weight-bold">Hand-Selected</h5>
+              <p class="small text-muted mb-0">Carefully curated limited-quantity pieces you won't find anywhere else.</p>
+            </div>
+          </div>
+          <div class="col-6">
+            <div class="card border-0 shadow-sm p-4 text-center h-100 bg-white">
+              <i class="fab fa-whatsapp fa-2x mb-3" style="color: #25D366;"></i>
+              <h5 class="font-weight-bold">Personalized Fit</h5>
+              <p class="small text-muted mb-0">Direct 1-on-1 WhatsApp consultations for sizing, measurements and videos.</p>
+            </div>
+          </div>
+          <div class="col-6">
+            <div class="card border-0 shadow-sm p-4 text-center h-100 bg-white">
+              <i class="fa fa-shipping-fast fa-2x mb-3" style="color: #1a3c34;"></i>
+              <h5 class="font-weight-bold">Nationwide Delivery</h5>
+              <p class="small text-muted mb-0">Speedy doorstep dispatch across Lagos, Abuja, Port Harcourt and beyond.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

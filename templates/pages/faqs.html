@@ -1,0 +1,137 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<section class="section-pagetop bg-light py-5 border-bottom">
+  <div class="container text-center">
+    <span class="text-uppercase tracking-wider small text-muted font-weight-bold">Help Center</span>
+    <h1 class="title-page font-weight-bold mt-2 mb-3" style="font-family: 'Playfair Display', Georgia, serif; font-size: 2.4rem;">Frequently Asked Questions</h1>
+    <p class="lead text-muted mx-auto" style="max-width: 650px;">
+      Find quick answers to common questions about browsing, ordering, sizing, and delivery.
+    </p>
+  </div>
+</section>
+
+<section class="section-content py-5">
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-lg-8">
+        
+        <div class="accordion" id="faqAccordion">
+
+          <!-- FAQ 1 -->
+          <div class="card mb-3 border shadow-sm rounded">
+            <div class="card-header bg-white py-3" id="headingOne">
+              <h5 class="mb-0">
+                <button class="btn btn-link text-dark font-weight-bold text-left w-100 text-decoration-none d-flex justify-content-between align-items-center" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true">
+                  <span>How do I order from Kemi's Shop?</span>
+                  <i class="fa fa-chevron-down small text-muted"></i>
+                </button>
+              </h5>
+            </div>
+            <div id="collapseOne" class="collapse show" data-parent="#faqAccordion">
+              <div class="card-body text-muted" style="line-height: 1.8;">
+                Ordering is personal and straightforward: browse our digital lookbook, tap <strong>"Order on WhatsApp"</strong> on any item you love, and you will be connected directly with Kemi on WhatsApp (<strong>+234 813 070 7949</strong>) with the item details already filled in. You can also shortlist items to your cart and send your entire collection in a single tap!
+              </div>
+            </div>
+          </div>
+
+          <!-- FAQ 2 -->
+          <div class="card mb-3 border shadow-sm rounded">
+            <div class="card-header bg-white py-3" id="headingTwo">
+              <h5 class="mb-0">
+                <button class="btn btn-link text-dark font-weight-bold text-left w-100 text-decoration-none d-flex justify-content-between align-items-center collapsed" type="button" data-toggle="collapse" data-target="#collapseTwo">
+                  <span>Are the designer items 100% authentic?</span>
+                  <i class="fa fa-chevron-down small text-muted"></i>
+                </button>
+              </h5>
+            </div>
+            <div id="collapseTwo" class="collapse" data-parent="#faqAccordion">
+              <div class="card-body text-muted" style="line-height: 1.8;">
+                Yes, absolutely! Every single piece in our boutique is 100% authentic, sourced directly from premier department stores and designer retailers in the United States and the United Kingdom, featuring genuine designer tags and brand labels.
+              </div>
+            </div>
+          </div>
+
+          <!-- FAQ 3 -->
+          <div class="card mb-3 border shadow-sm rounded">
+            <div class="card-header bg-white py-3" id="headingThree">
+              <h5 class="mb-0">
+                <button class="btn btn-link text-dark font-weight-bold text-left w-100 text-decoration-none d-flex justify-content-between align-items-center collapsed" type="button" data-toggle="collapse" data-target="#collapseThree">
+                  <span>How do I know what size to choose?</span>
+                  <i class="fa fa-chevron-down small text-muted"></i>
+                </button>
+              </h5>
+            </div>
+            <div id="collapseThree" class="collapse" data-parent="#faqAccordion">
+              <div class="card-body text-muted" style="line-height: 1.8;">
+                Each product listing displays US and UK sizing equivalents. If you are uncertain about fit, stretch, or silhouette, simply send us a message on WhatsApp with your measurements (bust, waist, hips, or shoe size), and Kemi will advise you on the best fit.
+              </div>
+            </div>
+          </div>
+
+          <!-- FAQ 4 -->
+          <div class="card mb-3 border shadow-sm rounded">
+            <div class="card-header bg-white py-3" id="headingFour">
+              <h5 class="mb-0">
+                <button class="btn btn-link text-dark font-weight-bold text-left w-100 text-decoration-none d-flex justify-content-between align-items-center collapsed" type="button" data-toggle="collapse" data-target="#collapseFour">
+                  <span>Can I request video clips of an item before buying?</span>
+                  <i class="fa fa-chevron-down small text-muted"></i>
+                </button>
+              </h5>
+            </div>
+            <div id="collapseFour" class="collapse" data-parent="#faqAccordion">
+              <div class="card-body text-muted" style="line-height: 1.8;">
+                Yes! We are delighted to send close-up videos of fabric movement, sequin shine, lining, and shoe details directly via WhatsApp so you can buy with total confidence.
+              </div>
+            </div>
+          </div>
+
+          <!-- FAQ 5 -->
+          <div class="card mb-3 border shadow-sm rounded">
+            <div class="card-header bg-white py-3" id="headingFive">
+              <h5 class="mb-0">
+                <button class="btn btn-link text-dark font-weight-bold text-left w-100 text-decoration-none d-flex justify-content-between align-items-center collapsed" type="button" data-toggle="collapse" data-target="#collapseFive">
+                  <span>How does payment work?</span>
+                  <i class="fa fa-chevron-down small text-muted"></i>
+                </button>
+              </h5>
+            </div>
+            <div id="collapseFive" class="collapse" data-parent="#faqAccordion">
+              <div class="card-body text-muted" style="line-height: 1.8;">
+                Payment is made easily via direct Nigerian Bank Transfer once your items and delivery details have been confirmed with Kemi on WhatsApp.
+              </div>
+            </div>
+          </div>
+
+          <!-- FAQ 6 -->
+          <div class="card mb-3 border shadow-sm rounded">
+            <div class="card-header bg-white py-3" id="headingSix">
+              <h5 class="mb-0">
+                <button class="btn btn-link text-dark font-weight-bold text-left w-100 text-decoration-none d-flex justify-content-between align-items-center collapsed" type="button" data-toggle="collapse" data-target="#collapseSix">
+                  <span>Do you deliver outside Lagos?</span>
+                  <i class="fa fa-chevron-down small text-muted"></i>
+                </button>
+              </h5>
+            </div>
+            <div id="collapseSix" class="collapse" data-parent="#faqAccordion">
+              <div class="card-body text-muted" style="line-height: 1.8;">
+                Yes, we arrange prompt courier and interstate dispatch across all 36 Nigerian states. Waybill details and dispatch confirmations are shared with you on WhatsApp.
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="text-center mt-5">
+          <p class="text-muted mb-3">Still have a question?</p>
+          <a href="https://wa.me/2348130707949" target="_blank" class="btn btn-success px-4 py-2" style="background-color: #25D366; border-color: #25D366;">
+            <i class="fab fa-whatsapp mr-2"></i> Ask Kemi on WhatsApp (+234 813 070 7949)
+          </a>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
