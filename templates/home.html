@@ -4,7 +4,7 @@
 {% block content %}
 
 <!-- ========================= LUXURY EDITORIAL SPLIT HERO SECTION ========================= -->
-<section class="section-hero-editorial">
+<section class="section-hero-editorial" id="home-hero-section">
   <div class="container hero-split-container d-flex align-items-center">
     <div class="hero-left-copy">
       <span class="hero-editorial-eyebrow">STEP INTO YOUR</span>
@@ -126,8 +126,11 @@ document.addEventListener('DOMContentLoaded', function() {
   var grid = document.getElementById('product-grid');
   var loadMoreWrapper = document.getElementById('load-more-wrapper');
   var titleEl = document.getElementById('home-collection-title');
+  var subEl = document.getElementById('home-collection-sub');
+  var heroSection = document.getElementById('home-hero-section');
   var pills = document.querySelectorAll('.home-cat-pill');
-  var currentFetchBase = "{% url 'home' %}";
+  var homeUrl = "{% url 'home' %}";
+  var currentFetchBase = homeUrl;
 
   function bindLoadMore() {
     var loadMoreBtn = document.getElementById('load-more-btn');
@@ -186,6 +189,19 @@ document.addEventListener('DOMContentLoaded', function() {
       pills.forEach(function(p) { p.classList.remove('active'); });
       this.classList.add('active');
       if (titleEl && catTitle) titleEl.textContent = catTitle;
+
+      // Show hero ONLY on "All Pieces" (homeUrl); hide it when any specific category is clicked
+      var isAllPieces = (fetchUrl === homeUrl);
+      if (heroSection) {
+        heroSection.classList.toggle('d-none', !isAllPieces);
+        heroSection.style.display = isAllPieces ? '' : 'none';
+      }
+      if (subEl) {
+        subEl.classList.toggle('d-none', !isAllPieces);
+      }
+      if (!isAllPieces) {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
 
       grid.style.opacity = '0.45';
       var url = new URL(fetchUrl, window.location.origin);

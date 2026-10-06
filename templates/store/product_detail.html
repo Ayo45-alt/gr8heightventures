@@ -63,13 +63,13 @@
                             </div>
 
                             <!-- Product Title -->
-                            <h1 class="product-detail-title font-weight-bold text-dark mb-2">
+                            <h1 class="product-detail-title font-weight-bold text-dark mb-2" style="font-family: 'Outfit', sans-serif !important; font-size: 1.75rem; letter-spacing: -0.3px;">
                                 {{ single_product.product_name }}
                             </h1>
 
                             <!-- Price Display -->
                             <div class="price-header d-flex align-items-baseline mb-3 pb-3 border-bottom">
-                                <span class="product-detail-price font-weight-bold mb-0" id="product-price" style="color: #1a3c34; letter-spacing: -0.5px;">
+                                <span class="product-detail-price font-weight-bold mb-0" id="product-price" style="font-family: 'Outfit', sans-serif !important; font-size: 1.65rem; color: #1a3c34; letter-spacing: -0.3px;">
                                     {% if color_options.0.size_prices %}
                                         {% for sk, sp in color_options.0.size_prices.items %}
                                             {% if forloop.first %}{{ sp }}{% endif %}
