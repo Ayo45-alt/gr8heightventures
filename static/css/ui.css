@@ -1720,7 +1720,7 @@ body {
 
 /* Full-Bleed Silk & Organza Drapery Hero Section */
 .section-hero-editorial {
-  background: #E8DCCB url('../images/banners/sunlit_sage_drapery.png?v=1') center center / cover no-repeat !important;
+  background: #E8DCCB url('../images/banners/sunlit_sage_drapery.webp?v=2') center center / cover no-repeat !important;
   image-rendering: -webkit-optimize-contrast !important;
   border-bottom: 1px solid rgba(214, 204, 188, 0.55) !important;
   margin-top: 0 !important;
@@ -2986,3 +2986,32 @@ a:hover {
 }
 
 /*# sourceMappingURL=ui.css.map */
+
+/* Follow on TikTok Modern Pill */
+.footer-tiktok-pill {
+  display: inline-flex;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  color: #FAF7F0 !important;
+  padding: 8px 16px;
+  border-radius: 30px;
+  font-size: 0.88rem;
+  letter-spacing: 0.3px;
+  transition: all 0.25s ease;
+  text-decoration: none !important;
+}
+.footer-tiktok-pill:hover {
+  background: #FE2C55;
+  border-color: #FE2C55;
+  color: #FFFFFF !important;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 14px rgba(254, 44, 85, 0.35);
+}
+.tiktok-badge-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+}

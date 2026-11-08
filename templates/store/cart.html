@@ -98,8 +98,11 @@
 			  <dt>Subtotal ({{ quantity }} item{% if quantity != 1 %}s{% endif %}):</dt>
 			  <dd class="text-right text-dark b"><strong style="font-size: 1.25rem;">₦{{ total|floatformat:0|intcomma }}</strong></dd>
 			</dl>
-			<a href="{{ whatsapp_cart_url }}" target="_blank" class="btn btn-success btn-block btn-lg mb-2 font-weight-bold" style="background-color: #25D366; border-color: #25D366; font-size: 0.95rem;">
-				<i class="fab fa-whatsapp mr-2"></i> Order via WhatsApp
+			<a href="{{ whatsapp_cart_url }}" target="_blank" class="btn btn-success btn-block btn-lg mb-2 font-weight-bold d-flex align-items-center justify-content-center" style="background-color: #25D366; border-color: #25D366; font-size: 0.92rem;">
+				<i class="fab fa-whatsapp mr-2" style="font-size: 1.15rem;"></i> Order on WhatsApp (Line 1: 0813 070 7949)
+			</a>
+			<a href="{{ whatsapp_cart_url_2 }}" target="_blank" class="btn btn-outline-success btn-block btn-lg mb-3 font-weight-bold d-flex align-items-center justify-content-center" style="color: #25D366; border-color: #25D366; font-size: 0.92rem;">
+				<i class="fab fa-whatsapp mr-2" style="font-size: 1.15rem;"></i> Order on WhatsApp (Line 2: 0911 274 9675)
 			</a>
 			<a href="{% url 'store'%}" class="btn btn-outline-dark btn-block">Continue Shopping</a>
 		</div> <!-- card-body.// -->

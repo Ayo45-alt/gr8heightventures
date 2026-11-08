@@ -182,8 +182,10 @@ def cart(request, total=0, quantity=0, cart_items=None):
         lines.append("Please confirm item availability and delivery arrangements. Thank you!")
         wa_text = "\n".join(lines)
         whatsapp_cart_url = f"https://wa.me/2348130707949?text={urllib.parse.quote(wa_text)}"
+        whatsapp_cart_url_2 = f"https://wa.me/2349112749675?text={urllib.parse.quote(wa_text)}"
     else:
         whatsapp_cart_url = "https://wa.me/2348130707949"
+        whatsapp_cart_url_2 = "https://wa.me/2349112749675"
 
     context = {
         'total': total,
@@ -192,6 +194,7 @@ def cart(request, total=0, quantity=0, cart_items=None):
         'tax': tax,
         'grand_total': grand_total,
         'whatsapp_cart_url': whatsapp_cart_url,
+        'whatsapp_cart_url_2': whatsapp_cart_url_2,
     }
     return render(request, 'store/cart.html', context)
 
