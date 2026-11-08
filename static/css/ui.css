@@ -1703,9 +1703,10 @@ body {
 
 /* Footer Adjustments */
 .section-footer {
-  background-color: #ffffff !important;
-  border-top: 1px solid #EAE3D5 !important;
-  padding: 30px 0 !important;
+  background-color: #13382C !important;
+  color: #FFFFFF !important;
+  border-top: 1px solid rgba(255, 255, 255, 0.08) !important;
+  padding: 36px 0 20px 0 !important;
 }
 
 /* Consistent Boutique Header Across All Pages */
