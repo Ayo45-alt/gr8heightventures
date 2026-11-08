@@ -1,88 +1,64 @@
-
 {% load static %}
-<!-- ========================= LUXURY FOREST GREEN FOOTER ========================= -->
-<footer class="section-footer-luxury text-white">
-  <div class="container py-5">
-    <div class="row">
-      <!-- Brand & Tagline -->
-      <div class="col-lg-3 col-md-6 col-12 mb-4">
-        <a href="{% url 'home' %}" class="footer-brand d-inline-block mb-3">
-          <img src="{% static 'images/logo_white.png' %}?v=1" alt="Kemi's Shop" style="max-height: 48px; height: 48px; object-fit: contain;">
+<footer class="section-footer text-white" style="background-color: #13382C; padding: 36px 0 20px 0;">
+  <div class="container">
+    <div class="row align-items-center mb-3">
+      <!-- Col 1: Brand Info -->
+      <div class="col-lg-4 col-md-5 col-12 mb-3 mb-md-0">
+        <a href="{% url 'home' %}" class="d-inline-block mb-1 text-decoration-none">
+          <img src="{% static 'images/logo_white.png' %}" alt="Kemi's Shop" class="footer-logo" style="max-height: 38px; width: auto;">
         </a>
-        <p class="footer-tagline">Shoes • Clothing • Everyday Style</p>
+        <p class="footer-tagline mb-0" style="color: #cad8d0; font-size: 0.88rem;">
+          Shoes &bull; Clothing &bull; Everyday Style
+        </p>
       </div>
 
-      <!-- Shop Links -->
-      <div class="col-lg-2 col-md-3 col-6 mb-4">
-        <h6 class="footer-column-title mb-3">Shop</h6>
-        <ul class="footer-links-list list-unstyled">
-          <li><a href="/store/category/shoes/">Shoes</a></li>
-          <li><a href="/store/category/dresses/">Dresses</a></li>
-          <li><a href="/store/category/tops/">Tops & Blouses</a></li>
-          <li><a href="/store/category/trousers/">Trousers</a></li>
+      <!-- Col 2: Customer Care -->
+      <div class="col-lg-3 col-md-3 col-6 mb-3 mb-md-0">
+        <h6 class="footer-column-title mb-2" style="font-size: 0.9rem; font-weight: 600; letter-spacing: 0.5px;">Customer Care</h6>
+        <ul class="list-unstyled footer-links mb-0" style="font-size: 0.84rem; line-height: 1.8;">
+          <li><a href="{% url 'contact' %}" class="text-white-50 text-decoration-none hover-white">Contact Us</a></li>
+          <li><a href="{% url 'delivery' %}" class="text-white-50 text-decoration-none hover-white">Delivery &amp; Shipping</a></li>
+          <li><a href="{% url 'returns' %}" class="text-white-50 text-decoration-none hover-white">Returns &amp; Exchanges</a></li>
+          <li><a href="{% url 'faqs' %}" class="text-white-50 text-decoration-none hover-white">FAQs</a></li>
         </ul>
       </div>
 
-      <!-- Customer Care -->
-      <div class="col-lg-2 col-md-3 col-6 mb-4">
-        <h6 class="footer-column-title mb-3">Customer Care</h6>
-        <ul class="footer-links-list list-unstyled">
-          <li><a href="{% url 'contact' %}">Contact Us</a></li>
-          <li><a href="{% url 'delivery' %}">Delivery & Shipping</a></li>
-          <li><a href="{% url 'returns' %}">Returns & Exchanges</a></li>
-          <li><a href="{% url 'faqs' %}">FAQs</a></li>
-        </ul>
-      </div>
-
-      <!-- Need Help? WhatsApp -->
-      <div class="col-lg-3 col-md-6 col-12 mb-4">
-        <h6 class="footer-column-title mb-3">Need Help?</h6>
-        <div class="footer-contact-box">
-          <a href="https://wa.me/2348130707949" target="_blank" class="footer-whatsapp-link d-flex align-items-center mb-2">
-            <i class="fab fa-whatsapp mr-2" style="font-size: 17px; color: #25D366;"></i>
-            <span>WhatsApp 1: +234 813 070 7949</span>
+      <!-- Col 3: Need Help? (Single number: 0813 070 7949) -->
+      <div class="col-lg-3 col-md-4 col-6 mb-3 mb-md-0">
+        <h6 class="footer-column-title mb-2" style="font-size: 0.9rem; font-weight: 600; letter-spacing: 0.5px;">Need Help?</h6>
+        <div class="footer-contact-box" style="font-size: 0.86rem;">
+          <a href="https://wa.me/2348130707949" target="_blank" class="d-flex align-items-center text-white text-decoration-none mb-1 font-weight-500">
+            <i class="fab fa-whatsapp mr-2" style="font-size: 18px; color: #25D366;"></i>
+            <span>Chat on WhatsApp</span>
           </a>
-          <a href="https://wa.me/2349112749675" target="_blank" class="footer-whatsapp-link d-flex align-items-center mb-2">
-            <i class="fab fa-whatsapp mr-2" style="font-size: 17px; color: #25D366;"></i>
-            <span>WhatsApp 2: +234 911 274 9675</span>
-          </a>
-          <p class="footer-phone-text mb-0 mt-2 pt-2 border-top" style="border-color: rgba(255,255,255,0.08) !important;">
-            <span class="small text-white-50 d-block mb-1">Calls &amp; Enquiries:</span>
-            <a href="tel:+2348130707949" class="text-white text-decoration-none mr-2 font-weight-bold" style="font-size: 0.85rem;">+234 813 070 7949</a>
-            <span class="text-white-50">|</span>
-            <a href="tel:+2349112749675" class="text-white text-decoration-none ml-2 font-weight-bold" style="font-size: 0.85rem;">+234 911 274 9675</a>
+          <p class="mb-0">
+            <a href="tel:+2348130707949" class="text-white-50 text-decoration-none">
+              <i class="fa fa-phone mr-1" style="font-size: 13px;"></i> +234 813 070 7949
+            </a>
           </p>
         </div>
       </div>
 
-      <!-- Follow Us -->
-      <div class="col-lg-3 col-md-6 col-12 mb-4">
-        <h6 class="footer-column-title mb-3">Follow Us</h6>
-        <div class="footer-social-wrap">
-          <a href="https://www.tiktok.com/@kemisshop" target="_blank" class="footer-tiktok-pill" id="footer-tiktok-link" title="Follow Kemi's Shop on TikTok">
-            <span class="tiktok-badge-icon mr-2">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64c.29 0 .58.04.85.12V9.31a6.34 6.34 0 0 0-1.12-.1 6.34 6.34 0 0 0-6.34 6.34 6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.33-6.15V9.45a8.16 8.16 0 0 0 4.05 1.08V7.08a4.85 4.85 0 0 1-.99-.39z"/>
-              </svg>
-            </span>
-            <span>Watch on TikTok</span>
-          </a>
-          <p class="small mt-2 mb-0" style="color: #8fa69a; font-size: 0.82rem; line-height: 1.4;">
-            Follow for new arrivals, try-ons &amp; video lookbooks.
-          </p>
-        </div>
+      <!-- Col 4: Follow on TikTok -->
+      <div class="col-lg-2 col-md-12 col-12 mt-2 mt-lg-0 text-lg-right">
+        <a href="https://www.tiktok.com/@kemisshopp?_r=1&_t=ZS-9BEOJLsydiY" target="_blank" class="footer-tiktok-pill text-decoration-none" title="Follow Kemi's Shop on TikTok">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" class="mr-2">
+            <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64c.29 0 .58.04.85.12V9.31a6.34 6.34 0 0 0-1.12-.1 6.34 6.34 0 0 0-6.34 6.34 6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.33-6.15V9.45a8.16 8.16 0 0 0 4.05 1.08V7.08a4.85 4.85 0 0 1-.99-.39z"/>
+          </svg>
+          <span style="font-weight: 600; color: #FFFFFF !important;">Watch on TikTok</span>
+        </a>
       </div>
     </div>
 
     <!-- Bottom Copyright & Legal Links -->
-    <div class="footer-bottom-bar border-top pt-4 mt-3 d-flex flex-column flex-md-row justify-content-between align-items-center">
-      <p class="copyright-text mb-2 mb-md-0">
+    <div class="border-top pt-3 d-flex flex-column flex-md-row justify-content-between align-items-center" style="border-color: rgba(255,255,255,0.12) !important; font-size: 0.8rem;">
+      <p class="copyright-text text-white-50 mb-1 mb-md-0">
         &copy; 2026 Kemi's Shop. All rights reserved.
       </p>
-      <div class="footer-legal-links">
-        <a href="{% url 'privacy' %}">Privacy Policy</a>
-        <span class="mx-2 separator">|</span>
-        <a href="{% url 'terms' %}">Terms & Conditions</a>
+      <div class="footer-legal-links text-white-50">
+        <a href="{% url 'privacy' %}" class="text-white-50 text-decoration-none hover-white">Privacy Policy</a>
+        <span class="mx-2 separator text-white-50">|</span>
+        <a href="{% url 'terms' %}" class="text-white-50 text-decoration-none hover-white">Terms &amp; Conditions</a>
       </div>
     </div>
   </div>

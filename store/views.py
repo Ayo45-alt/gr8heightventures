@@ -472,8 +472,7 @@ def product_detail(request, category_slug, product_slug):
         size_str = f" (Size: {sizes.first().variation_value})" if sizes.exists() else ""
         wa_msg = f"Hello Kemi's Shop! 👋 I would like to order: {single_product.product_name}{size_str} (Price: ₦{single_product.price:,.0f}). Is this available?"
     whatsapp_url = f"https://wa.me/2348130707949?text={urllib.parse.quote(wa_msg)}"
-    whatsapp_url_2 = f"https://wa.me/2349112749675?text={urllib.parse.quote(wa_msg)}"
-    
+        
     # Standard customer-facing detail page: no internal inventory breakdown memos
     inventory_breakdown = ''
 
@@ -486,8 +485,7 @@ def product_detail(request, category_slug, product_slug):
         'average_rating': average_rating,
         'product_gallery': product_gallery,
         'whatsapp_url': whatsapp_url,
-        'whatsapp_url_2': whatsapp_url_2,
-        'color_options': color_options,
+                'color_options': color_options,
         'color_options_json': color_options_json,
         'inventory_breakdown': inventory_breakdown,
     }

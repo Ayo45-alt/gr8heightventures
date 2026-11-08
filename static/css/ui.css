@@ -2987,20 +2987,6 @@ a:hover {
 
 /*# sourceMappingURL=ui.css.map */
 
-/* Follow on TikTok Modern Pill */
-.footer-tiktok-pill {
-  display: inline-flex;
-  align-items: center;
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.22);
-  color: #FAF7F0 !important;
-  padding: 8px 16px;
-  border-radius: 30px;
-  font-size: 0.88rem;
-  letter-spacing: 0.3px;
-  transition: all 0.25s ease;
-  text-decoration: none !important;
-}
 .footer-tiktok-pill:hover {
   background: #FE2C55;
   border-color: #FE2C55;
@@ -3014,4 +3000,34 @@ a:hover {
   justify-content: center;
   width: 20px;
   height: 20px;
+}
+
+
+/* Follow on TikTok Modern High-Contrast Pill */
+.footer-tiktok-pill {
+  display: inline-flex !important;
+  align-items: center !important;
+  background: rgba(255, 255, 255, 0.16) !important;
+  border: 1px solid rgba(255, 255, 255, 0.45) !important;
+  color: #FFFFFF !important;
+  padding: 8px 18px !important;
+  border-radius: 30px !important;
+  font-size: 0.88rem !important;
+  letter-spacing: 0.3px !important;
+  transition: all 0.25s ease !important;
+  text-decoration: none !important;
+}
+.footer-tiktok-pill span {
+  color: #FFFFFF !important;
+  font-weight: 600 !important;
+}
+.footer-tiktok-pill:hover {
+  background: #FE2C55 !important;
+  border-color: #FE2C55 !important;
+  color: #FFFFFF !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 4px 14px rgba(254, 44, 85, 0.4) !important;
+}
+.hover-white:hover {
+  color: #FFFFFF !important;
 }
