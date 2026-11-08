@@ -3,7 +3,7 @@ from django.shortcuts import render, redirect
 from store.models import Product, Variation
 from .models import Cart, CartItem, get_variation_max_stock
 from django.shortcuts import get_object_or_404
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.core.exceptions import ObjectDoesNotExist
 
 
@@ -15,9 +15,22 @@ def _cart_id(request):
     return cart
 
 
+
+def _get_cart_count(request):
+    """Return total qty of items in the user's cart."""
+    if request.user.is_authenticated:
+        items = CartItem.objects.filter(user=request.user, is_active=True)
+    else:
+        cart = Cart.objects.filter(cart_id=_cart_id(request)).first()
+        if cart is None:
+            return 0
+        items = CartItem.objects.filter(cart=cart, is_active=True)
+    return sum(item.quantity for item in items)
+
 def add_cart(request, product_id):
-    product = Product.objects.get(id=product_id)
+    product = get_object_or_404(Product, id=product_id)
     product_variation = []
+    added_to_cart = False
     
     if request.method == 'POST':
         for item in request.POST:
@@ -62,12 +75,14 @@ def add_cart(request, product_id):
                 if item.quantity < max_qty:
                     item.quantity += 1
                     item.save()
+                    added_to_cart = True
             elif max_qty > 0:
                 item = CartItem.objects.create(product=product, quantity=1, user=request.user)
                 if len(product_variation) > 0:
                     item.variations.clear()
                     item.variations.add(*product_variation)
                 item.save()
+                added_to_cart = True
         elif max_qty > 0:
             cart_item = CartItem.objects.create(
                 product=product,
@@ -78,6 +93,14 @@ def add_cart(request, product_id):
                 cart_item.variations.clear()
                 cart_item.variations.add(*product_variation)
             cart_item.save()
+            added_to_cart = True
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            if not added_to_cart:
+                return JsonResponse(
+                    {'status': 'error', 'message': 'No more stock is available for this selection.'},
+                    status=400,
+                )
+            return JsonResponse({'status': 'ok', 'cart_count': _get_cart_count(request)})
         return redirect('cart')
     else:
         # For guest users (session-based cart)
@@ -108,12 +131,14 @@ def add_cart(request, product_id):
                 if item.quantity < max_qty:
                     item.quantity += 1
                     item.save()
+                    added_to_cart = True
             elif max_qty > 0:
                 item = CartItem.objects.create(product=product, quantity=1, cart=cart)
                 if len(product_variation) > 0:
                     item.variations.clear()
                     item.variations.add(*product_variation)
                 item.save()
+                added_to_cart = True
         elif max_qty > 0:
             cart_item = CartItem.objects.create(
                 product=product,
@@ -124,6 +149,14 @@ def add_cart(request, product_id):
                 cart_item.variations.clear()
                 cart_item.variations.add(*product_variation)
             cart_item.save()
+            added_to_cart = True
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            if not added_to_cart:
+                return JsonResponse(
+                    {'status': 'error', 'message': 'No more stock is available for this selection.'},
+                    status=400,
+                )
+            return JsonResponse({'status': 'ok', 'cart_count': _get_cart_count(request)})
         return redirect('cart')
     
 
