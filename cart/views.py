@@ -5,6 +5,7 @@ from .models import Cart, CartItem, get_variation_max_stock
 from django.shortcuts import get_object_or_404
 from django.http import HttpResponse, JsonResponse
 from django.core.exceptions import ObjectDoesNotExist
+from django.contrib import messages
 
 
 
@@ -101,6 +102,10 @@ def add_cart(request, product_id):
                     status=400,
                 )
             return JsonResponse({'status': 'ok', 'cart_count': _get_cart_count(request)})
+        if request.POST.get('stay_on_product_page'):
+            if added_to_cart:
+                messages.success(request, 'Added to Bag', extra_tags='bag-added')
+            return redirect(product.get_url())
         return redirect('cart')
     else:
         # For guest users (session-based cart)
@@ -157,6 +162,10 @@ def add_cart(request, product_id):
                     status=400,
                 )
             return JsonResponse({'status': 'ok', 'cart_count': _get_cart_count(request)})
+        if request.POST.get('stay_on_product_page'):
+            if added_to_cart:
+                messages.success(request, 'Added to Bag', extra_tags='bag-added')
+            return redirect(product.get_url())
         return redirect('cart')
     
 

@@ -1,4 +1,4 @@
-from django.db.models import Case, When, Count, Q
+from django.db.models import Case, When, Count, IntegerField, Q
 from .models import Category
 from store.models import Product
 
@@ -10,6 +10,7 @@ def menu_links(request):
         When(slug='trousers', then=3),
         When(slug='jackets', then=4),
         default=5,
+        output_field=IntegerField(),
     )
     links = Category.objects.annotate(
         prod_count=Count('product', filter=Q(product__is_available=True))

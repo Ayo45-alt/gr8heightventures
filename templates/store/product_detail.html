@@ -55,6 +55,7 @@
                 <main class="col-lg-6 p-3 p-md-5 bg-white">
                     <form action="{% url 'add_cart' single_product.id %}" method="POST">
                         {% csrf_token %}
+                        <input type="hidden" name="stay_on_product_page" value="1">
                         <article class="content-body p-0">
 
                             <!-- Category / Brand Header -->
@@ -342,8 +343,14 @@
             },10);
             setTimeout(function(){
                 $t.css({opacity:0,transform:'translateX(-50%) translateY(40px)'});
-            },2200);
+            },5000);
         }
+
+        {% for message in messages %}
+            {% if 'bag-added' in message.tags %}
+                showBagToast('{{ message|escapejs }}');
+            {% endif %}
+        {% endfor %}
 
         // 1. Delegated Thumbnail click logic
         $(document).on('click', '.thumb-card', function(e){

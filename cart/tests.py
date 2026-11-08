@@ -25,6 +25,26 @@ class AddCartAjaxTests(TestCase):
             HTTP_X_REQUESTED_WITH='XMLHttpRequest',
         )
 
+    def test_product_detail_form_fallback_returns_to_product(self):
+        response = self.client.post(
+            self.add_url,
+            {'stay_on_product_page': '1'},
+            follow=True,
+        )
+
+        self.assertRedirects(response, self.product.get_url())
+        self.assertEqual(CartItem.objects.get(product=self.product).quantity, 1)
+        self.assertContains(response, "showBagToast('Added to Bag')")
+        self.assertEqual(
+            [str(message) for message in response.context['messages']],
+            ['Added to Bag'],
+        )
+
+    def test_cart_quantity_form_still_returns_to_cart(self):
+        response = self.client.post(self.add_url)
+
+        self.assertRedirects(response, reverse('cart'))
+
     def test_ajax_add_stays_on_page_and_updates_cart_count(self):
         response = self.add_product()
 
