@@ -46,6 +46,15 @@ class AddCartAjaxTests(TestCase):
 
         self.assertRedirects(response, reverse('cart'))
 
+    def test_product_whatsapp_order_adds_item_then_redirects_to_cart(self):
+        response = self.client.post(
+            self.add_url,
+            {'order_via_whatsapp': '1', 'size': 'UK 10'},
+        )
+
+        self.assertRedirects(response, reverse('cart'))
+        self.assertEqual(CartItem.objects.get(product=self.product).quantity, 1)
+
     def test_ajax_add_stays_on_page_and_updates_cart_count(self):
         response = self.add_product()
 

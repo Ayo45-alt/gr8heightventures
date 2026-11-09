@@ -192,9 +192,9 @@
                                         </div>
 
                                         <!-- WhatsApp 1-Click Concierge Order -->
-                                        <a id="wa-direct-order-btn" href="{{ whatsapp_url }}" target="_blank" class="btn btn-success btn-lg px-3 py-3 font-weight-bold d-flex align-items-center justify-content-center cta-wa-btn" style="background-color: #25D366; border-color: #25D366; border-radius: 8px; font-size: 0.95rem;" title="Order via WhatsApp">
+                                        <button id="wa-direct-order-btn" type="submit" name="order_via_whatsapp" value="1" class="btn btn-success btn-lg px-3 py-3 font-weight-bold d-flex align-items-center justify-content-center cta-wa-btn" style="background-color: #25D366; border-color: #25D366; border-radius: 8px; font-size: 0.95rem;" title="Continue to the Bag to enter delivery details">
                                             <i class="fab fa-whatsapp mr-2" style="font-size: 1.25rem;"></i> Order on WhatsApp
-                                        </a>
+                                        </button>
                                     </div>
                                 </div>
                             {% endif %}
@@ -285,25 +285,42 @@
 
 <script>
     $(document).ready(function(){
+        var orderViaWhatsapp = false;
+
+        $('#wa-direct-order-btn').on('click', function(){
+            orderViaWhatsapp = true;
+        });
+
         // 0. AJAX Add-to-Bag (stay on page, show toast, update badge)
         $('form[action*="add_cart"]').on('submit', function(e){
             e.preventDefault();
             var $form = $(this);
-            var $btn  = $form.find('button[type="submit"]');
+            var $btn = orderViaWhatsapp
+                ? $('#wa-direct-order-btn')
+                : $form.find('button[type="submit"]').first();
             $btn.prop('disabled', true);
+            var requestData = $form.serialize();
+            if (orderViaWhatsapp) {
+                requestData += '&order_via_whatsapp=1';
+            }
             $.ajax({
                 url:  $form.attr('action'),
                 type: 'POST',
-                data: $form.serialize(),
+                data: requestData,
                 headers: {'X-Requested-With': 'XMLHttpRequest'},
                 success: function(resp){
                     if (resp.status !== 'ok') {
                         showBagToast(resp.message || 'Could not add this item to your bag.', true);
                         $btn.prop('disabled', false);
+                        orderViaWhatsapp = false;
                         return;
                     }
                     if (resp.cart_count !== undefined) {
                         $('span.cart-circle-badge:not(#wishlist-badge)').text(resp.cart_count);
+                    }
+                    if (orderViaWhatsapp) {
+                        window.location.href = "{% url 'cart' %}";
+                        return;
                     }
                     showBagToast('Added to Bag');
                     $btn.html('<i class="fas fa-check mr-2"></i> Added!').css({'background-color':'#2e7d32','border-color':'#2e7d32'});
@@ -313,6 +330,7 @@
                 },
                 error: function(xhr){
                     $btn.prop('disabled', false);
+                    orderViaWhatsapp = false;
                     var message = xhr.responseJSON && xhr.responseJSON.message
                         ? xhr.responseJSON.message
                         : 'Could not add this item to your bag. Please try again.';

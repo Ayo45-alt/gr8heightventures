@@ -114,6 +114,8 @@ def add_cart(request, product_id):
                     status=400,
                 )
             return JsonResponse({'status': 'ok', 'cart_count': _get_cart_count(request)})
+        if request.POST.get('order_via_whatsapp'):
+            return redirect('cart')
         if request.POST.get('stay_on_product_page'):
             if added_to_cart:
                 messages.success(request, 'Added to Bag', extra_tags='bag-added')
@@ -174,6 +176,8 @@ def add_cart(request, product_id):
                     status=400,
                 )
             return JsonResponse({'status': 'ok', 'cart_count': _get_cart_count(request)})
+        if request.POST.get('order_via_whatsapp'):
+            return redirect('cart')
         if request.POST.get('stay_on_product_page'):
             if added_to_cart:
                 messages.success(request, 'Added to Bag', extra_tags='bag-added')
