@@ -1,6 +1,10 @@
 import os
+import tempfile
 from pathlib import Path
+from urllib.parse import parse_qs, unquote, urlsplit
+
 from dotenv import load_dotenv
+from django.core.exceptions import ImproperlyConfigured
 
 load_dotenv()
 """
@@ -96,23 +100,55 @@ AUTH_USER_MODEL = 'accounts.Account'
 
 
 # Database
-# On Vercel serverless (/var/task is read-only), copy db.sqlite3 to /tmp/db.sqlite3 so Cart & Wishlist writes succeed
-if os.environ.get('VERCEL'):
-    import shutil
-    _src_db = BASE_DIR / 'db.sqlite3'
-    _tmp_db = Path('/tmp/db.sqlite3')
-    if _src_db.exists() and not _tmp_db.exists():
-        shutil.copy2(_src_db, _tmp_db)
-    _db_path = _tmp_db
-else:
-    _db_path = BASE_DIR / 'db.sqlite3'
+DATABASE_URL = os.getenv('DATABASE_URL')
+if DATABASE_URL:
+    parsed_database_url = urlsplit(DATABASE_URL)
+    if parsed_database_url.scheme not in ('postgres', 'postgresql'):
+        raise ImproperlyConfigured('DATABASE_URL must use the postgres or postgresql scheme.')
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': _db_path,
+    database_name = unquote(parsed_database_url.path.lstrip('/'))
+    if not parsed_database_url.hostname or not database_name:
+        raise ImproperlyConfigured('DATABASE_URL must include a database name and host.')
+
+    database_options = {
+        key: values[-1]
+        for key, values in parse_qs(parsed_database_url.query).items()
     }
-}
+    database_options.setdefault('sslmode', 'require')
+
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': database_name,
+            'USER': unquote(parsed_database_url.username or ''),
+            'PASSWORD': unquote(parsed_database_url.password or ''),
+            'HOST': parsed_database_url.hostname,
+            'PORT': parsed_database_url.port or '',
+            'OPTIONS': database_options,
+            'CONN_MAX_AGE': 60,
+        }
+    }
+elif os.environ.get('VERCEL'):
+    import shutil
+
+    source_db = BASE_DIR / 'db.sqlite3'
+    temporary_db = Path(tempfile.gettempdir()) / 'db.sqlite3'
+    if source_db.exists() and not temporary_db.exists():
+        shutil.copy2(source_db, temporary_db)
+
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': temporary_db,
+        }
+    }
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
+    }
 
 
 # Password validation

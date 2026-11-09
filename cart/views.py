@@ -6,6 +6,7 @@ from django.shortcuts import get_object_or_404
 from django.http import HttpResponse, JsonResponse
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib import messages
+from django.views.decorators.http import require_POST
 
 
 
@@ -27,6 +28,17 @@ def _get_cart_count(request):
             return 0
         items = CartItem.objects.filter(cart=cart, is_active=True)
     return sum(item.quantity for item in items)
+
+
+def _get_cart_items(request):
+    if request.user.is_authenticated:
+        return CartItem.objects.filter(user=request.user, is_active=True).select_related('product')
+
+    cart = Cart.objects.filter(cart_id=_cart_id(request)).first()
+    if cart is None:
+        return CartItem.objects.none()
+    return CartItem.objects.filter(cart=cart, is_active=True).select_related('product')
+
 
 def add_cart(request, product_id):
     product = get_object_or_404(Product, id=product_id)
@@ -196,46 +208,69 @@ def remove_cart_item(request, cart_item_id):
 
 
 def cart(request, total=0, quantity=0, cart_items=None):
-    try:
-        if request.user.is_authenticated:
-            cart_items = CartItem.objects.filter(user=request.user, is_active=True).select_related('product')
-        else:
-            cart = Cart.objects.get(cart_id=_cart_id(request))
-            cart_items = CartItem.objects.filter(cart=cart, is_active=True).select_related('product')
-        
-        for cart_item in cart_items:
-            total += (cart_item.product.price * cart_item.quantity)
-            quantity += cart_item.quantity
-    except ObjectDoesNotExist:
-        cart_items = []
+    cart_items = _get_cart_items(request)
+    for cart_item in cart_items:
+        total += (cart_item.product.price * cart_item.quantity)
+        quantity += cart_item.quantity
 
     tax = 0
     grand_total = total
 
-    # Format pre-filled WhatsApp message for whole cart
-    if cart_items:
-        lines = ["Hello Kemi's Shop! 👋", "I would like to order the following items from your boutique:\n"]
-        for idx, item in enumerate(cart_items, 1):
-            variations = item.variations.all()
-            var_str = ", ".join([f"{v.variation_category.capitalize()}: {v.variation_value}" for v in variations]) if variations else ""
-            var_info = f" [{var_str}]" if var_str else ""
-            lines.append(f"{idx}. {item.product.product_name}{var_info} x{item.quantity} - ₦{item.product.price * item.quantity:,.0f}")
-        lines.append(f"\nSubtotal: ₦{total:,.0f}")
-        lines.append("Please confirm item availability and delivery arrangements. Thank you!")
-        wa_text = "\n".join(lines)
-        whatsapp_cart_url = f"https://wa.me/2348130707949?text={urllib.parse.quote(wa_text)}"
-    else:
-        whatsapp_cart_url = "https://wa.me/2348130707949"
-        
     context = {
         'total': total,
         'quantity': quantity,
         'cart_items': cart_items,
         'tax': tax,
         'grand_total': grand_total,
-        'whatsapp_cart_url': whatsapp_cart_url,
     }
     return render(request, 'store/cart.html', context)
+
+
+@require_POST
+def order_whatsapp(request):
+    customer_name = request.POST.get('customer_name', '').strip()
+    delivery_address = request.POST.get('delivery_address', '').strip()
+
+    if not customer_name or not delivery_address:
+        messages.error(request, 'Please enter your name and delivery address to continue.')
+        return redirect('cart')
+
+    cart_items = _get_cart_items(request)
+    if not cart_items.exists():
+        messages.error(request, 'Your Bag is empty. Add an item before placing an order.')
+        return redirect('cart')
+
+    total = sum(item.product.price * item.quantity for item in cart_items)
+    lines = [
+        "Hello Kemi's Shop! 👋",
+        'I would like to order the following items from your boutique:',
+        '',
+        f'Name: {customer_name}',
+        f'Delivery address: {delivery_address}',
+        '',
+        'Order:',
+    ]
+    for idx, item in enumerate(cart_items, 1):
+        variations = item.variations.all()
+        var_str = ', '.join(
+            f'{variation.variation_category.capitalize()}: {variation.variation_value}'
+            for variation in variations
+        )
+        var_info = f' [{var_str}]' if var_str else ''
+        lines.append(
+            f'{idx}. {item.product.product_name}{var_info} x{item.quantity} - '
+            f'₦{item.product.price * item.quantity:,.0f}'
+        )
+    lines.extend([
+        '',
+        f'Subtotal: ₦{total:,.0f}',
+        'Please confirm item availability and delivery arrangements. Thank you!',
+    ])
+    whatsapp_url = (
+        "https://wa.me/2348130707949?text="
+        f"{urllib.parse.quote(chr(10).join(lines))}"
+    )
+    return redirect(whatsapp_url)
 
 
 from django.shortcuts import render, redirect

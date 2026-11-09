@@ -1,5 +1,6 @@
 from django.test import TestCase
 from django.urls import reverse
+from urllib.parse import parse_qs, urlparse
 
 from category.models import Category
 from store.models import Product
@@ -69,3 +70,44 @@ class AddCartAjaxTests(TestCase):
         response = self.client.get(reverse('cart'))
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.context['cart_count'], 0)
+
+    def test_whatsapp_order_includes_name_address_and_cart_contents(self):
+        self.add_product()
+
+        response = self.client.post(
+            reverse('order_whatsapp'),
+            {
+                'customer_name': 'Ada Lovelace',
+                'delivery_address': '12 Market Road, Lagos',
+            },
+        )
+
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(urlparse(response['Location']).netloc, 'wa.me')
+        message = parse_qs(urlparse(response['Location']).query)['text'][0]
+        self.assertIn('Name: Ada Lovelace', message)
+        self.assertIn('Delivery address: 12 Market Road, Lagos', message)
+        self.assertIn('Test dress x1 - ₦10,000', message)
+        self.assertIn('Subtotal: ₦10,000', message)
+
+    def test_whatsapp_order_requires_name_and_delivery_address(self):
+        self.add_product()
+
+        response = self.client.post(
+            reverse('order_whatsapp'),
+            {'customer_name': 'Ada Lovelace', 'delivery_address': '   '},
+            follow=True,
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Please enter your name and delivery address to continue.')
+
+    def test_whatsapp_order_rejects_empty_cart(self):
+        response = self.client.post(
+            reverse('order_whatsapp'),
+            {'customer_name': 'Ada Lovelace', 'delivery_address': '12 Market Road, Lagos'},
+            follow=True,
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Your Bag is empty. Add an item before placing an order.')

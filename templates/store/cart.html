@@ -7,6 +7,7 @@
 
 <section class="section-content padding-y bg">
 <div class="container">
+{% include 'includes/alert.html' %}
 
 <!-- ============================ COMPONENT 1 ================================= -->
 {% if not cart_items %}
@@ -98,9 +99,21 @@
 			  <dt>Subtotal ({{ quantity }} item{% if quantity != 1 %}s{% endif %}):</dt>
 			  <dd class="text-right text-dark b"><strong style="font-size: 1.25rem;">₦{{ total|floatformat:0|intcomma }}</strong></dd>
 			</dl>
-						<a href="{{ whatsapp_cart_url }}" target="_blank" class="btn btn-success btn-block btn-lg mb-2 font-weight-bold" style="background-color: #25D366; border-color: #25D366; font-size: 0.95rem;">
-				<i class="fab fa-whatsapp mr-2"></i> Order via WhatsApp
-			</a>
+			<form action="{% url 'order_whatsapp' %}" method="POST">
+				{% csrf_token %}
+				<div class="form-group">
+					<label for="customer-name" class="font-weight-bold">Your name</label>
+					<input type="text" id="customer-name" name="customer_name" class="form-control" autocomplete="name" maxlength="150" required>
+				</div>
+				<div class="form-group">
+					<label for="delivery-address" class="font-weight-bold">Delivery address</label>
+					<textarea id="delivery-address" name="delivery_address" class="form-control" rows="3" autocomplete="street-address" maxlength="500" required></textarea>
+					<small class="form-text text-muted">Delivery fees are confirmed with Kemi on WhatsApp.</small>
+				</div>
+				<button type="submit" class="btn btn-success btn-block btn-lg mb-2 font-weight-bold" style="background-color: #25D366; border-color: #25D366; font-size: 0.95rem;">
+					<i class="fab fa-whatsapp mr-2"></i> Continue to WhatsApp
+				</button>
+			</form>
 			<a href="{% url 'store'%}" class="btn btn-outline-dark btn-block">Continue Shopping</a>
 		</div> <!-- card-body.// -->
 		</div> <!-- card.// -->
