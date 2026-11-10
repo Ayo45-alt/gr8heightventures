@@ -80,6 +80,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'greatkart.context_processors.seo_metadata',
                 'category.context_processor.menu_links',
                 'cart.context_processor.counter',
                 'store.context_processors.wishlist_info',
@@ -199,6 +200,11 @@ USE_TZ = True
 # media files configuration
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
+
+SEO_SITE_URL = os.getenv(
+    'SEO_SITE_URL',
+    'https://www.kemisshop.com.ng',
+).rstrip('/')
 
 SUPABASE_PROJECT_URL = os.getenv('SUPABASE_PROJECT_URL', '').rstrip('/')
 SUPABASE_STORAGE_BUCKET = os.getenv('SUPABASE_STORAGE_BUCKET', '')

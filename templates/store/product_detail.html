@@ -2,6 +2,11 @@
 {% load static %}
 {% load humanize %}
 
+{% block title %}{{ single_product.product_name }} | Kemi's Shop Nigeria{% endblock %}
+{% block meta_description %}Shop {{ single_product.product_name }} at Kemi's Shop Nigeria. {{ single_product.description|truncatechars:140 }}{% endblock %}
+{% block og_title %}{{ single_product.product_name }} | Kemi's Shop Nigeria{% endblock %}
+{% block og_description %}{{ single_product.description|truncatechars:200 }}{% endblock %}
+
 {% block content %}
 <section class="section-content padding-y bg-light">
     <div class="container">

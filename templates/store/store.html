@@ -2,6 +2,9 @@
 {% load static %}
 {% load humanize %}
 
+{% block title %}{% if category %}{{ category.category_name }}{% else %}Shop Clothes, Dresses & Shoes{% endif %} | Kemi's Shop Nigeria{% endblock %}
+{% block meta_description %}Browse {% if category %}{{ category.category_name }}{% else %}women's clothing, dresses, shoes, and designer fashion{% endif %} at Kemi's Shop Nigeria. Discover carefully selected styles and order online.{% endblock %}
+
 {% block content %}
 <!-- ========================= EDITORIAL COLLECTION HERO ========================= -->
 <section class="store-collection-header">

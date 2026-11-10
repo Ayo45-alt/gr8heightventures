@@ -20,6 +20,7 @@ from store import views as store_views
 from django.conf import settings
 from django.conf.urls.static import static
 from django.views.static import serve
+from . import seo
 
 
 def cached_serve(request, path, document_root=None, show_indexes=False):
@@ -31,6 +32,8 @@ def cached_serve(request, path, document_root=None, show_indexes=False):
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('owner/', include('dashboard.urls')),
+    path('robots.txt', seo.robots_txt, name='robots-txt'),
+    path('sitemap.xml', seo.sitemap_xml, name='sitemap'),
     path('', views.home, name='home'),
     path('store/', include('store.urls')),
     path('cart/', include('cart.urls')),

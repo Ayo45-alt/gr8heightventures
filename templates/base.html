@@ -6,7 +6,15 @@
 <link rel="preload" as="image" href="{% static 'images/banners/sunlit_sage_drapery.webp' %}?v=2" type="image/webp">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-<title>Kemi's Shop | Online Store for Clothes & Shoes</title>
+<title>{% block title %}Kemi's Shop Nigeria | Curated Fashion, Dresses, Shoes & Clothing{% endblock %}</title>
+<meta name="description" content="{% block meta_description %}Shop Kemi's Shop Nigeria for carefully selected women's clothing, dresses, shoes, and designer fashion. Browse the collection and order online.{% endblock %}">
+<link rel="canonical" href="{{ canonical_url }}">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Kemi's Shop">
+<meta property="og:title" content="{% block og_title %}Kemi's Shop Nigeria | Curated Fashion{% endblock %}">
+<meta property="og:description" content="{% block og_description %}Carefully selected women's clothing, dresses, shoes, and designer fashion from Kemi's Shop Nigeria.{% endblock %}">
+<meta property="og:url" content="{{ canonical_url }}">
+<meta name="robots" content="index, follow">
 
 <!-- Google Fonts (Strict 2-Font System: Playfair Display + Outfit) -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
