@@ -1,0 +1,32 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Owner sign in | Kemi's Shop</title>
+    <link rel="stylesheet" href="{% static 'css/owner-dashboard.css' %}">
+</head>
+<body class="owner-login-page">
+    <main class="login-card">
+        <p class="eyebrow">KEMI'S SHOP</p>
+        <h1>Welcome back</h1>
+        <p class="muted">Sign in to view your shop dashboard.</p>
+        <form method="post">
+            {% csrf_token %}
+            <input type="hidden" name="next" value="{{ next }}">
+            {% if form.non_field_errors %}
+                <div class="form-errors" role="alert">{{ form.non_field_errors }}</div>
+            {% endif %}
+            <label for="{{ form.username.id_for_label }}">Email</label>
+            {{ form.username }}
+            {% if form.username.errors %}<div class="form-errors">{{ form.username.errors }}</div>{% endif %}
+            <label for="{{ form.password.id_for_label }}">Password</label>
+            {{ form.password }}
+            {% if form.password.errors %}<div class="form-errors">{{ form.password.errors }}</div>{% endif %}
+            <button class="button button-primary login-button" type="submit">Sign in</button>
+        </form>
+        <p class="login-note">Dashboard access is limited to authorized accounts.</p>
+    </main>
+</body>
+</html>

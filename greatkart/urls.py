@@ -30,6 +30,7 @@ def cached_serve(request, path, document_root=None, show_indexes=False):
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('owner/', include('dashboard.urls')),
     path('', views.home, name='home'),
     path('store/', include('store.urls')),
     path('cart/', include('cart.urls')),
@@ -50,4 +51,3 @@ urlpatterns = [
     re_path(r'^media/(?P<path>.*)$', cached_serve, {'document_root': settings.MEDIA_ROOT}),
     re_path(r'^static/(?P<path>.*)$', cached_serve, {'document_root': settings.BASE_DIR / 'static'}),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-

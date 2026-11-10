@@ -51,7 +51,9 @@ INSTALLED_APPS = [
     'accounts',
     'store',
     'cart',
-    'orders'
+    'orders',
+    'analytics',
+    'dashboard',
 ]
 
 MIDDLEWARE = [
@@ -62,6 +64,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'analytics.middleware.PageViewCounterMiddleware',
 ]
 
 ROOT_URLCONF = 'greatkart.urls'
@@ -125,7 +128,8 @@ if DATABASE_URL:
             'HOST': parsed_database_url.hostname,
             'PORT': parsed_database_url.port or '',
             'OPTIONS': database_options,
-            'CONN_MAX_AGE': 60,
+            'CONN_MAX_AGE': 0 if os.environ.get('VERCEL') else 60,
+            'DISABLE_SERVER_SIDE_CURSORS': bool(os.environ.get('VERCEL')),
         }
     }
 elif os.environ.get('VERCEL'):

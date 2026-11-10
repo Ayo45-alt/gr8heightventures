@@ -1,0 +1,181 @@
+{% load humanize %}
+{% load static %}
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Shop dashboard | Kemi's Shop</title>
+    <link rel="stylesheet" href="{% static 'css/owner-dashboard.css' %}">
+</head>
+<body>
+    <div class="dashboard-shell">
+        <header class="topbar">
+            <a class="brand" href="{% url 'owner-dashboard' %}">
+                <span class="brand-mark">K</span>
+                <span>Kemi's Shop <small>OWNER DASHBOARD</small></span>
+            </a>
+            <div class="topbar-actions">
+                <a class="store-link" href="{% url 'home' %}">View website <span aria-hidden="true">↗</span></a>
+                <form method="post" action="{% url 'owner-logout' %}">
+                    {% csrf_token %}
+                    <button class="button button-quiet" type="submit">Sign out</button>
+                </form>
+            </div>
+        </header>
+
+        <main class="main-content">
+            <section class="page-heading">
+                <div>
+                    <p class="eyebrow">YOUR STORE AT A GLANCE</p>
+                    <h1>Good to see you</h1>
+                    <p class="muted">Here is what's happening with your shop.</p>
+                </div>
+                <p class="today-date">{{ today|date:"l, F j, Y" }}</p>
+            </section>
+
+            {% if traffic_storage_warning %}
+                <aside class="storage-warning" role="status">
+                    Page-view history may not persist on Vercel while this site uses SQLite.
+                    Configure a persistent PostgreSQL database with <code>DATABASE_URL</code> to keep these totals.
+                </aside>
+            {% endif %}
+
+            <section class="stats-grid" aria-label="Store overview">
+                <article class="stat-card stat-highlight">
+                    <p>Page views today</p>
+                    <strong>{{ today_views|intcomma }}</strong>
+                    <span>Page loads on your website</span>
+                </article>
+                <article class="stat-card">
+                    <p>Total page views</p>
+                    <strong>{{ page_view_total|intcomma }}</strong>
+                    <span>Since tracking was enabled</span>
+                </article>
+                <article class="stat-card">
+                    <p>Products</p>
+                    <strong>{{ product_count|intcomma }}</strong>
+                    <span>In your catalog</span>
+                </article>
+                <article class="stat-card">
+                    <p>Orders</p>
+                    <strong>{{ order_count|intcomma }}</strong>
+                    <span>Placed orders</span>
+                </article>
+            </section>
+
+            <section class="panel">
+                <div class="panel-heading">
+                    <div>
+                        <h2>Daily page views</h2>
+                        <p class="muted">Last 30 days. Only daily totals are stored—no visitor or IP details.</p>
+                    </div>
+                    <span class="tracked-days">{{ tracked_days }} days tracked</span>
+                </div>
+                <div class="chart" role="img" aria-label="Daily page views over the last 30 days">
+                    {% for item in chart_days %}
+                        <div class="chart-day" title="{{ item.day|date:'M j' }}: {{ item.views }} page views">
+                            <span class="chart-value">{% if item.views %}{{ item.views|intcomma }}{% endif %}</span>
+                            <div class="bar-track">
+                                <span class="bar" style="height: {{ item.height }}%"></span>
+                            </div>
+                            <span class="chart-label">{% if forloop.first or forloop.last or item.day.day == 1 or forloop.counter0|divisibleby:5 %}{{ item.day|date:"M j" }}{% endif %}</span>
+                        </div>
+                    {% endfor %}
+                </div>
+            </section>
+
+            <section class="panel">
+                <div class="panel-heading">
+                    <div>
+                        <h2>Daily history</h2>
+                        <p class="muted">Your complete page-view history, one total per day.</p>
+                    </div>
+                </div>
+                <div class="table-wrap">
+                    <table>
+                        <thead><tr><th>Date</th><th class="number-cell">Page views</th></tr></thead>
+                        <tbody>
+                            {% for item in daily_views %}
+                                <tr><td>{{ item.day|date:"F j, Y" }}</td><td class="number-cell">{{ item.views|intcomma }}</td></tr>
+                            {% empty %}
+                                <tr><td colspan="2" class="empty-state">Your daily counts will show here after people visit the website.</td></tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <section class="panel">
+                <div class="panel-heading">
+                    <div>
+                        <h2>Products</h2>
+                        <p class="muted">Your current catalog.</p>
+                    </div>
+                    <span class="tracked-days">{{ product_count }} products</span>
+                </div>
+                <div class="table-wrap">
+                    <table>
+                        <thead><tr><th>Product</th><th>Category</th><th class="number-cell">Price</th><th class="number-cell">Stock</th><th>Status</th></tr></thead>
+                        <tbody>
+                            {% for product in products %}
+                                <tr>
+                                    <td><a class="table-link" href="{{ product.get_url }}">{{ product.product_name }}</a></td>
+                                    <td>{{ product.category.category_name }}</td>
+                                    <td class="number-cell">₦{{ product.price|intcomma }}</td>
+                                    <td class="number-cell">{{ product.stock }}</td>
+                                    <td><span class="status {% if product.is_available %}status-live{% else %}status-muted{% endif %}">{% if product.is_available %}Available{% else %}Hidden{% endif %}</span></td>
+                                </tr>
+                            {% empty %}
+                                <tr><td colspan="5" class="empty-state">No products in your catalog yet.</td></tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% if products.has_other_pages %}
+                    <nav class="pagination" aria-label="Product pages">
+                        {% if products.has_previous %}<a href="?products={{ products.previous_page_number }}{% if orders.number != 1 %}&orders={{ orders.number }}{% endif %}">Previous</a>{% endif %}
+                        <span>Page {{ products.number }} of {{ products.paginator.num_pages }}</span>
+                        {% if products.has_next %}<a href="?products={{ products.next_page_number }}{% if orders.number != 1 %}&orders={{ orders.number }}{% endif %}">Next</a>{% endif %}
+                    </nav>
+                {% endif %}
+            </section>
+
+            <section class="panel">
+                <div class="panel-heading">
+                    <div>
+                        <h2>Recent orders</h2>
+                        <p class="muted">Latest placed orders. Customer contact details are not shown here.</p>
+                    </div>
+                    <span class="tracked-days">{{ order_count }} orders</span>
+                </div>
+                <div class="table-wrap">
+                    <table>
+                        <thead><tr><th>Order</th><th>Date</th><th class="number-cell">Total</th><th>Status</th></tr></thead>
+                        <tbody>
+                            {% for order in orders %}
+                                <tr>
+                                    <td>{{ order.order_number }}</td>
+                                    <td>{{ order.created_at|date:"M j, Y" }}</td>
+                                    <td class="number-cell">₦{{ order.order_total|floatformat:2|intcomma }}</td>
+                                    <td><span class="status status-muted">{{ order.get_status_display }}</span></td>
+                                </tr>
+                            {% empty %}
+                                <tr><td colspan="4" class="empty-state">Placed orders will show here.</td></tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% if orders.has_other_pages %}
+                    <nav class="pagination" aria-label="Order pages">
+                        {% if orders.has_previous %}<a href="?orders={{ orders.previous_page_number }}{% if products.number != 1 %}&products={{ products.number }}{% endif %}">Previous</a>{% endif %}
+                        <span>Page {{ orders.number }} of {{ orders.paginator.num_pages }}</span>
+                        {% if orders.has_next %}<a href="?orders={{ orders.next_page_number }}{% if products.number != 1 %}&products={{ products.number }}{% endif %}">Next</a>{% endif %}
+                    </nav>
+                {% endif %}
+            </section>
+            <footer class="dashboard-footer">Kemi's Shop · Private owner dashboard</footer>
+        </main>
+    </div>
+</body>
+</html>

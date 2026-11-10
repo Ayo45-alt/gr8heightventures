@@ -86,9 +86,10 @@ class UserProfile(models.Model):
 # Put signals AFTER your models
 @receiver(post_save, sender=Account)
 def create_user_profile(sender, instance, created, **kwargs):
-    if created:
+    if created and not kwargs.get('raw', False):
         UserProfile.objects.create(user=instance)
 
 @receiver(post_save, sender=Account)
 def save_user_profile(sender, instance, **kwargs):
-    instance.userprofile.save()
+    if not kwargs.get('raw', False):
+        instance.userprofile.save()
