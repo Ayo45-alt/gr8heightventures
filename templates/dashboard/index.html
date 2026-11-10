@@ -6,7 +6,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Shop dashboard | Kemi's Shop</title>
-    <link rel="stylesheet" href="{% static 'css/owner-dashboard.css' %}">
+    <link rel="stylesheet" href="{% static 'css/owner-dashboard.css' %}?v=2">
 </head>
 <body>
     <div class="dashboard-shell">
@@ -137,7 +137,7 @@
                                     <td>
                                         <div class="product-identity">
                                             {% if product.images %}
-                                                <img class="product-thumbnail" src="{{ product.images.url }}" alt="" loading="lazy">
+                                                <img class="product-thumbnail" src="{{ product.images.url }}" alt="" width="44" height="44" style="width: 44px; height: 44px; min-width: 44px; max-width: 44px; object-fit: cover;" loading="lazy">
                                             {% else %}
                                                 <span class="product-thumbnail product-thumbnail-empty" aria-hidden="true">—</span>
                                             {% endif %}
