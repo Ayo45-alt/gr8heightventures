@@ -16,6 +16,7 @@ class ProductEditForm(forms.ModelForm):
             'stock',
             'category',
             'is_available',
+            'images',
         )
         widgets = {
             'description': forms.Textarea(attrs={'rows': 4}),

@@ -1,6 +1,10 @@
+from io import BytesIO
+
 from django.contrib.auth import get_user_model
+from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import TestCase
 from django.urls import reverse
+from PIL import Image
 
 from analytics.models import DailyPageView
 from category.models import Category
@@ -102,6 +106,43 @@ class OwnerDashboardTests(TestCase):
         self.assertEqual(product.stock, 7)
         self.assertTrue(product.is_available)
         self.assertEqual(product.images.name, 'photos/products/sneakers.jpg')
+
+    def test_staff_can_replace_product_image(self):
+        user = self.create_staff_user()
+        category = Category.objects.create(category_name='Shoes', slug='shoes')
+        product = Product.objects.create(
+            product_name='Everyday Sneakers',
+            slug='everyday-sneakers',
+            price=80,
+            stock=4,
+            category=category,
+            images='photos/products/old-sneakers.jpg',
+        )
+        self.client.force_login(user)
+        image_buffer = BytesIO()
+        Image.new('RGB', (1, 1), color='white').save(image_buffer, format='PNG')
+        image = SimpleUploadedFile(
+            'new-sneakers.png', image_buffer.getvalue(), content_type='image/png'
+        )
+
+        response = self.client.post(
+            reverse('owner-product-edit', args=[product.pk]),
+            {
+                'product_name': product.product_name,
+                'description': '',
+                'price': '80',
+                'stock': '4',
+                'category': str(category.pk),
+                'is_available': 'on',
+                'images': image,
+            },
+        )
+
+        product.refresh_from_db()
+        if product.images.name.endswith('new-sneakers.png'):
+            self.addCleanup(product.images.delete, False)
+        self.assertRedirects(response, reverse('owner-dashboard'))
+        self.assertTrue(product.images.name.endswith('new-sneakers.png'))
 
     def test_product_edit_rejects_negative_price(self):
         user = self.create_staff_user()
