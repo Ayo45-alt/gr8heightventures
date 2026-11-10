@@ -77,5 +77,9 @@ class SearchEngineDiscoveryTests(TestCase):
         self.assertContains(response, 'name="description"')
         self.assertContains(
             response,
+            'name="google-site-verification" content="MYD5AGJGRHDHqqhmBpASP0S3iB0ql2H38I3kC1VTExo"',
+        )
+        self.assertContains(
+            response,
             "<title>Kemi's Shop Nigeria | Women's Clothes, Dresses",
         )
