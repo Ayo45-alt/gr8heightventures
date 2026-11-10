@@ -34,6 +34,14 @@
                 <p class="today-date">{{ today|date:"l, F j, Y" }}</p>
             </section>
 
+            {% if messages %}
+                <div class="message-list" role="status">
+                    {% for message in messages %}
+                        <p class="dashboard-message {% if message.tags == 'error' %}message-error{% else %}message-success{% endif %}">{{ message }}</p>
+                    {% endfor %}
+                </div>
+            {% endif %}
+
             {% if traffic_storage_warning %}
                 <aside class="storage-warning" role="status">
                     Page-view history may not persist on Vercel while this site uses SQLite.
@@ -110,13 +118,13 @@
                 <div class="panel-heading">
                     <div>
                         <h2>Products</h2>
-                        <p class="muted">Your current catalog.</p>
+                        <p class="muted">Edit product details, pricing, stock, category, and availability.</p>
                     </div>
                     <span class="tracked-days">{{ product_count }} products</span>
                 </div>
                 <div class="table-wrap">
                     <table>
-                        <thead><tr><th>Product</th><th>Category</th><th class="number-cell">Price</th><th class="number-cell">Stock</th><th>Status</th></tr></thead>
+                        <thead><tr><th>Product</th><th>Category</th><th class="number-cell">Price</th><th class="number-cell">Stock</th><th>Status</th><th>Manage</th></tr></thead>
                         <tbody>
                             {% for product in products %}
                                 <tr>
@@ -125,9 +133,10 @@
                                     <td class="number-cell">₦{{ product.price|intcomma }}</td>
                                     <td class="number-cell">{{ product.stock }}</td>
                                     <td><span class="status {% if product.is_available %}status-live{% else %}status-muted{% endif %}">{% if product.is_available %}Available{% else %}Hidden{% endif %}</span></td>
+                                    <td><a class="button button-small" href="{% url 'owner-product-edit' product.pk %}">Edit</a></td>
                                 </tr>
                             {% empty %}
-                                <tr><td colspan="5" class="empty-state">No products in your catalog yet.</td></tr>
+                                <tr><td colspan="6" class="empty-state">No products in your catalog yet.</td></tr>
                             {% endfor %}
                         </tbody>
                     </table>
@@ -145,13 +154,13 @@
                 <div class="panel-heading">
                     <div>
                         <h2>Recent orders</h2>
-                        <p class="muted">Latest placed orders. Customer contact details are not shown here.</p>
+                        <p class="muted">Update order progress. Customer contact details are not shown here.</p>
                     </div>
                     <span class="tracked-days">{{ order_count }} orders</span>
                 </div>
                 <div class="table-wrap">
                     <table>
-                        <thead><tr><th>Order</th><th>Date</th><th class="number-cell">Total</th><th>Status</th></tr></thead>
+                        <thead><tr><th>Order</th><th>Date</th><th class="number-cell">Total</th><th>Status</th><th>Update status</th></tr></thead>
                         <tbody>
                             {% for order in orders %}
                                 <tr>
@@ -159,9 +168,21 @@
                                     <td>{{ order.created_at|date:"M j, Y" }}</td>
                                     <td class="number-cell">₦{{ order.order_total|floatformat:2|intcomma }}</td>
                                     <td><span class="status status-muted">{{ order.get_status_display }}</span></td>
+                                    <td>
+                                        <form class="status-form" method="post" action="{% url 'owner-order-status' order.pk %}">
+                                            {% csrf_token %}
+                                            <label class="sr-only" for="status-{{ order.pk }}">Status for order {{ order.order_number }}</label>
+                                            <select id="status-{{ order.pk }}" name="status">
+                                                {% for value, label in order_status_choices %}
+                                                    <option value="{{ value }}" {% if order.status == value %}selected{% endif %}>{{ label }}</option>
+                                                {% endfor %}
+                                            </select>
+                                            <button class="button button-small" type="submit">Save</button>
+                                        </form>
+                                    </td>
                                 </tr>
                             {% empty %}
-                                <tr><td colspan="4" class="empty-state">Placed orders will show here.</td></tr>
+                                <tr><td colspan="5" class="empty-state">Placed orders will show here.</td></tr>
                             {% endfor %}
                         </tbody>
                     </table>

@@ -1,0 +1,57 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Edit {{ product.product_name }} | Kemi's Shop</title>
+    <link rel="stylesheet" href="{% static 'css/owner-dashboard.css' %}">
+</head>
+<body>
+    <div class="dashboard-shell">
+        <header class="topbar">
+            <a class="brand" href="{% url 'owner-dashboard' %}">
+                <span class="brand-mark">K</span>
+                <span>Kemi's Shop <small>OWNER DASHBOARD</small></span>
+            </a>
+            <div class="topbar-actions">
+                <a class="store-link" href="{% url 'owner-dashboard' %}">Back to dashboard</a>
+                <form method="post" action="{% url 'owner-logout' %}">
+                    {% csrf_token %}
+                    <button class="button button-quiet" type="submit">Sign out</button>
+                </form>
+            </div>
+        </header>
+        <main class="main-content edit-content">
+            <p class="eyebrow">PRODUCT CATALOG</p>
+            <h1>Edit product</h1>
+            <p class="muted edit-intro">Update {{ product.product_name }}. This does not add or delete products.</p>
+            {% if messages %}
+                <div class="message-list" role="status">
+                    {% for message in messages %}
+                        <p class="dashboard-message {% if message.tags == 'error' %}message-error{% else %}message-success{% endif %}">{{ message }}</p>
+                    {% endfor %}
+                </div>
+            {% endif %}
+            <form class="edit-form" method="post">
+                {% csrf_token %}
+                {% for field in form %}
+                    <div class="edit-field">
+                        <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                        {{ field }}
+                        {% if field.help_text %}<span class="field-help">{{ field.help_text }}</span>{% endif %}
+                        {% for error in field.errors %}<span class="field-error">{{ error }}</span>{% endfor %}
+                    </div>
+                {% endfor %}
+                {% if form.non_field_errors %}
+                    <div class="form-errors">{{ form.non_field_errors }}</div>
+                {% endif %}
+                <div class="edit-actions">
+                    <a class="button button-secondary" href="{% url 'owner-dashboard' %}">Cancel</a>
+                    <button class="button button-primary" type="submit">Save changes</button>
+                </div>
+            </form>
+        </main>
+    </div>
+</body>
+</html>

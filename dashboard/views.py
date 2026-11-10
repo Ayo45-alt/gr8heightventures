@@ -2,12 +2,13 @@ import os
 from datetime import timedelta
 
 from django.contrib import auth
+from django.contrib import messages
 from django.contrib.auth.decorators import user_passes_test
 from django.contrib.auth.forms import AuthenticationForm
 from django.conf import settings
 from django.core.paginator import Paginator
 from django.db.models import Sum
-from django.shortcuts import redirect, render
+from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 from django.utils.http import url_has_allowed_host_and_scheme
 from django.views.decorators.http import require_POST
@@ -15,6 +16,13 @@ from django.views.decorators.http import require_POST
 from analytics.models import DailyPageView
 from orders.models import Order
 from store.models import Product
+from .forms import ProductEditForm
+
+
+staff_required = user_passes_test(
+    lambda user: user.is_authenticated and user.is_staff,
+    login_url='owner-login',
+)
 
 
 def owner_login(request):
@@ -43,10 +51,7 @@ def owner_login(request):
     })
 
 
-@user_passes_test(
-    lambda user: user.is_authenticated and user.is_staff,
-    login_url='owner-login',
-)
+@staff_required
 def owner_dashboard(request):
     today = timezone.localdate()
     chart_start = today - timedelta(days=29)
@@ -93,9 +98,44 @@ def owner_dashboard(request):
         'daily_views': daily_views,
         'products': product_page,
         'orders': order_page,
+        'order_status_choices': Order.STATUS,
         'product_count': Product.objects.count(),
         'order_count': Order.objects.filter(is_ordered=True).count(),
     })
+
+
+@staff_required
+def edit_product(request, product_id):
+    product = get_object_or_404(Product, pk=product_id)
+    if request.method == 'POST':
+        form = ProductEditForm(request.POST, request.FILES, instance=product)
+        if form.is_valid():
+            form.save()
+            messages.success(request, f'{product.product_name} was updated.')
+            return redirect('owner-dashboard')
+    else:
+        form = ProductEditForm(instance=product)
+
+    return render(request, 'dashboard/edit_product.html', {
+        'form': form,
+        'product': product,
+    })
+
+
+@staff_required
+@require_POST
+def update_order_status(request, order_id):
+    order = get_object_or_404(Order, pk=order_id, is_ordered=True)
+    new_status = request.POST.get('status')
+    valid_statuses = {value for value, _ in Order.STATUS}
+    if new_status not in valid_statuses:
+        messages.error(request, 'Choose a valid order status.')
+        return redirect('owner-dashboard')
+
+    order.status = new_status
+    order.save(update_fields=['status', 'updated_at'])
+    messages.success(request, f'Order {order.order_number} status updated.')
+    return redirect('owner-dashboard')
 
 
 @require_POST

@@ -29,7 +29,7 @@ class OwnerDashboardTests(TestCase):
         user.save(update_fields=['is_staff'])
         DailyPageView.objects.create(day='2026-01-01', views=12)
         category = Category.objects.create(category_name='Shoes', slug='shoes')
-        Product.objects.create(
+        product = Product.objects.create(
             product_name='Everyday Sneakers',
             slug='everyday-sneakers',
             price=80,
@@ -37,7 +37,7 @@ class OwnerDashboardTests(TestCase):
             category=category,
             images='photos/products/sneakers.jpg',
         )
-        Order.objects.create(
+        order = Order.objects.create(
             user=user,
             order_number='ORDER-123',
             first_name='Private',
@@ -61,7 +61,115 @@ class OwnerDashboardTests(TestCase):
         self.assertContains(response, '12')
         self.assertContains(response, 'Everyday Sneakers')
         self.assertContains(response, 'ORDER-123')
+        self.assertContains(
+            response, reverse('owner-product-edit', args=[product.pk])
+        )
+        self.assertContains(
+            response, reverse('owner-order-status', args=[order.pk])
+        )
         self.assertNotContains(response, 'private@example.com')
+
+    def test_staff_can_edit_existing_product(self):
+        user = self.create_staff_user()
+        category = Category.objects.create(category_name='Shoes', slug='shoes')
+        product = Product.objects.create(
+            product_name='Everyday Sneakers',
+            slug='everyday-sneakers',
+            price=80,
+            stock=4,
+            category=category,
+            images='photos/products/sneakers.jpg',
+        )
+        self.client.force_login(user)
+
+        response = self.client.post(
+            reverse('owner-product-edit', args=[product.pk]),
+            {
+                'product_name': 'Classic Sneakers',
+                'description': 'Updated description',
+                'price': '95',
+                'stock': '7',
+                'category': str(category.pk),
+                'is_available': 'on',
+            },
+        )
+
+        product.refresh_from_db()
+        self.assertRedirects(response, reverse('owner-dashboard'))
+        self.assertEqual(product.product_name, 'Classic Sneakers')
+        self.assertEqual(product.description, 'Updated description')
+        self.assertEqual(product.price, 95)
+        self.assertEqual(product.stock, 7)
+        self.assertTrue(product.is_available)
+        self.assertEqual(product.images.name, 'photos/products/sneakers.jpg')
+
+    def test_product_edit_rejects_negative_price(self):
+        user = self.create_staff_user()
+        category = Category.objects.create(category_name='Shoes', slug='shoes')
+        product = Product.objects.create(
+            product_name='Everyday Sneakers',
+            slug='everyday-sneakers',
+            price=80,
+            stock=4,
+            category=category,
+            images='photos/products/sneakers.jpg',
+        )
+        self.client.force_login(user)
+
+        response = self.client.post(
+            reverse('owner-product-edit', args=[product.pk]),
+            {
+                'product_name': 'Everyday Sneakers',
+                'description': '',
+                'price': '-1',
+                'stock': '4',
+                'category': str(category.pk),
+            },
+        )
+
+        product.refresh_from_db()
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Ensure this value is greater than or equal to 0')
+        self.assertEqual(product.price, 80)
+
+    def test_staff_can_update_placed_order_status(self):
+        user = self.create_staff_user()
+        order = self.create_placed_order(user)
+        self.client.force_login(user)
+
+        response = self.client.post(
+            reverse('owner-order-status', args=[order.pk]),
+            {'status': 'Accepted'},
+        )
+
+        order.refresh_from_db()
+        self.assertRedirects(response, reverse('owner-dashboard'))
+        self.assertEqual(order.status, 'Accepted')
+
+    def test_order_status_rejects_invalid_values(self):
+        user = self.create_staff_user()
+        order = self.create_placed_order(user)
+        self.client.force_login(user)
+
+        response = self.client.post(
+            reverse('owner-order-status', args=[order.pk]),
+            {'status': 'Shipped'},
+        )
+
+        order.refresh_from_db()
+        self.assertRedirects(response, reverse('owner-dashboard'))
+        self.assertEqual(order.status, 'New')
+
+    def test_order_status_updates_require_post(self):
+        user = self.create_staff_user()
+        order = self.create_placed_order(user)
+        self.client.force_login(user)
+
+        response = self.client.get(reverse('owner-order-status', args=[order.pk]))
+
+        self.assertEqual(response.status_code, 405)
+        order.refresh_from_db()
+        self.assertEqual(order.status, 'New')
 
     def test_regular_user_cannot_sign_in_to_owner_dashboard(self):
         user = get_user_model().objects.create_user(
@@ -80,3 +188,32 @@ class OwnerDashboardTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'does not have dashboard access')
         self.assertFalse(response.wsgi_request.user.is_authenticated)
+
+    def create_staff_user(self):
+        user = get_user_model().objects.create_user(
+            first_name='Shop',
+            last_name='Owner',
+            username='shopowner',
+            email='owner@example.com',
+            password='test-password-123',
+        )
+        user.is_staff = True
+        user.save(update_fields=['is_staff'])
+        return user
+
+    def create_placed_order(self, user):
+        return Order.objects.create(
+            user=user,
+            order_number='ORDER-123',
+            first_name='Private',
+            last_name='Customer',
+            phone='0000000000',
+            email='private@example.com',
+            address_line_1='Private address',
+            country='Nigeria',
+            state='Lagos',
+            city='Lagos',
+            order_total=80,
+            tax=0,
+            is_ordered=True,
+        )
