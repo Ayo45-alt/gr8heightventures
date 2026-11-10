@@ -118,17 +118,32 @@
                 <div class="panel-heading">
                     <div>
                         <h2>Products</h2>
-                        <p class="muted">Edit product details, pricing, stock, category, and availability.</p>
+                        <p class="muted">See each product, check stock, and edit its details or image.</p>
                     </div>
-                    <span class="tracked-days">{{ product_count }} products</span>
+                    <div class="panel-heading-actions">
+                        <span class="tracked-days">{{ product_count }} products</span>
+                        <a class="button button-small" href="{% url 'owner-product-add' %}">Add product</a>
+                    </div>
                 </div>
+                {% if not product_image_storage_ready %}
+                    <p class="storage-warning">Product image uploads need Supabase Storage setup. Existing product images remain available.</p>
+                {% endif %}
                 <div class="table-wrap">
                     <table>
-                        <thead><tr><th>Product</th><th>Category</th><th class="number-cell">Price</th><th class="number-cell">Stock</th><th>Status</th><th>Manage</th></tr></thead>
+                        <thead><tr><th>Product</th><th>Category</th><th class="number-cell">Price</th><th class="number-cell">In stock</th><th>Status</th><th>Manage</th></tr></thead>
                         <tbody>
                             {% for product in products %}
                                 <tr>
-                                    <td><a class="table-link" href="{{ product.get_url }}">{{ product.product_name }}</a></td>
+                                    <td>
+                                        <div class="product-identity">
+                                            {% if product.images %}
+                                                <img class="product-thumbnail" src="{{ product.images.url }}" alt="" loading="lazy">
+                                            {% else %}
+                                                <span class="product-thumbnail product-thumbnail-empty" aria-hidden="true">—</span>
+                                            {% endif %}
+                                            <a class="table-link" href="{{ product.get_url }}">{{ product.product_name }}</a>
+                                        </div>
+                                    </td>
                                     <td>{{ product.category.category_name }}</td>
                                     <td class="number-cell">₦{{ product.price|intcomma }}</td>
                                     <td class="number-cell">{{ product.stock }}</td>

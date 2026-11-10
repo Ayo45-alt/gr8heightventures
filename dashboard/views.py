@@ -1,22 +1,29 @@
+import logging
 import os
 from datetime import timedelta
 
+from botocore.exceptions import BotoCoreError
 from django.contrib import auth
 from django.contrib import messages
 from django.contrib.auth.decorators import user_passes_test
 from django.contrib.auth.forms import AuthenticationForm
 from django.conf import settings
 from django.core.paginator import Paginator
+from django.core.exceptions import ImproperlyConfigured
 from django.db.models import Sum
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
+from django.utils.text import slugify
 from django.utils.http import url_has_allowed_host_and_scheme
 from django.views.decorators.http import require_POST
 
 from analytics.models import DailyPageView
 from orders.models import Order
 from store.models import Product
-from .forms import ProductEditForm
+from .forms import ProductCreateForm, ProductEditForm
+
+
+logger = logging.getLogger(__name__)
 
 
 staff_required = user_passes_test(
@@ -99,8 +106,51 @@ def owner_dashboard(request):
         'products': product_page,
         'orders': order_page,
         'order_status_choices': Order.STATUS,
+        'product_image_storage_ready': bool(
+            settings.SUPABASE_PROJECT_URL
+            and settings.SUPABASE_STORAGE_BUCKET
+            and settings.SUPABASE_STORAGE_S3_ENDPOINT
+            and settings.SUPABASE_STORAGE_S3_REGION
+            and os.environ.get('SUPABASE_STORAGE_S3_ACCESS_KEY_ID')
+            and os.environ.get('SUPABASE_STORAGE_S3_SECRET_ACCESS_KEY')
+        ),
         'product_count': Product.objects.count(),
         'order_count': Order.objects.filter(is_ordered=True).count(),
+    })
+
+
+@staff_required
+def add_product(request):
+    if request.method == 'POST':
+        form = ProductCreateForm(request.POST, request.FILES)
+        if form.is_valid():
+            try:
+                product = form.save(commit=False)
+            except (BotoCoreError, ImproperlyConfigured) as error:
+                logger.error('Product image upload failed: %s', type(error).__name__)
+                form.add_error(
+                    'images',
+                    'The product image could not be uploaded. Check image storage setup and try again.',
+                )
+            else:
+                base_slug = slugify(product.product_name)[:200] or 'product'
+                product_slug = base_slug
+                suffix = 2
+                while Product.objects.filter(slug=product_slug).exists():
+                    suffix_text = f'-{suffix}'
+                    product_slug = f'{base_slug[:200 - len(suffix_text)]}{suffix_text}'
+                    suffix += 1
+                product.slug = product_slug
+                product.save()
+                form.save_m2m()
+                messages.success(request, f'{product.product_name} was added.')
+                return redirect('owner-dashboard')
+    else:
+        form = ProductCreateForm()
+
+    return render(request, 'dashboard/edit_product.html', {
+        'form': form,
+        'is_create': True,
     })
 
 
@@ -110,9 +160,17 @@ def edit_product(request, product_id):
     if request.method == 'POST':
         form = ProductEditForm(request.POST, request.FILES, instance=product)
         if form.is_valid():
-            form.save()
-            messages.success(request, f'{product.product_name} was updated.')
-            return redirect('owner-dashboard')
+            try:
+                form.save()
+            except (BotoCoreError, ImproperlyConfigured) as error:
+                logger.error('Product image upload failed: %s', type(error).__name__)
+                form.add_error(
+                    'images',
+                    'The product image could not be uploaded. Check image storage setup and try again.',
+                )
+            else:
+                messages.success(request, f'{product.product_name} was updated.')
+                return redirect('owner-dashboard')
     else:
         form = ProductEditForm(instance=product)
 

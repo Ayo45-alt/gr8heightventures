@@ -24,8 +24,14 @@
         </header>
         <main class="main-content edit-content">
             <p class="eyebrow">PRODUCT CATALOG</p>
-            <h1>Edit product</h1>
-            <p class="muted edit-intro">Update {{ product.product_name }}. This does not add or delete products.</p>
+            <h1>{% if is_create %}Add product{% else %}Edit product{% endif %}</h1>
+            <p class="muted edit-intro">{% if is_create %}Add a product to your catalog. A product image is required.{% else %}Update {{ product.product_name }}. Products cannot be deleted here.{% endif %}</p>
+            {% if product and product.images %}
+                <div class="edit-image-preview">
+                    <img src="{{ product.images.url }}" alt="Current image for {{ product.product_name }}">
+                    <span>Current product image</span>
+                </div>
+            {% endif %}
             {% if messages %}
                 <div class="message-list" role="status">
                     {% for message in messages %}
@@ -48,7 +54,7 @@
                 {% endif %}
                 <div class="edit-actions">
                     <a class="button button-secondary" href="{% url 'owner-dashboard' %}">Cancel</a>
-                    <button class="button button-primary" type="submit">Save changes</button>
+                    <button class="button button-primary" type="submit">{% if is_create %}Add product{% else %}Save changes{% endif %}</button>
                 </div>
             </form>
         </main>

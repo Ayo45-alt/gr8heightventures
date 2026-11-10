@@ -1,8 +1,9 @@
 from io import BytesIO
+from unittest.mock import patch
 
 from django.contrib.auth import get_user_model
 from django.core.files.uploadedfile import SimpleUploadedFile
-from django.test import TestCase
+from django.test import TestCase, override_settings
 from django.urls import reverse
 from PIL import Image
 
@@ -64,6 +65,8 @@ class OwnerDashboardTests(TestCase):
         self.assertContains(response, 'Total page views')
         self.assertContains(response, '12')
         self.assertContains(response, 'Everyday Sneakers')
+        self.assertContains(response, 'product-thumbnail')
+        self.assertContains(response, 'In stock')
         self.assertContains(response, 'ORDER-123')
         self.assertContains(
             response, reverse('owner-product-edit', args=[product.pk])
@@ -107,7 +110,15 @@ class OwnerDashboardTests(TestCase):
         self.assertTrue(product.is_available)
         self.assertEqual(product.images.name, 'photos/products/sneakers.jpg')
 
-    def test_staff_can_replace_product_image(self):
+    @patch(
+        'dashboard.forms.upload_product_image',
+        return_value='supabase://products/new-sneakers.png',
+    )
+    @override_settings(
+        SUPABASE_PROJECT_URL='https://shop-example.supabase.co',
+        SUPABASE_STORAGE_BUCKET='product-images',
+    )
+    def test_staff_can_replace_product_image(self, upload_image):
         user = self.create_staff_user()
         category = Category.objects.create(category_name='Shoes', slug='shoes')
         product = Product.objects.create(
@@ -139,10 +150,44 @@ class OwnerDashboardTests(TestCase):
         )
 
         product.refresh_from_db()
-        if product.images.name.endswith('new-sneakers.png'):
-            self.addCleanup(product.images.delete, False)
         self.assertRedirects(response, reverse('owner-dashboard'))
         self.assertTrue(product.images.name.endswith('new-sneakers.png'))
+        upload_image.assert_called_once()
+
+    @patch('dashboard.forms.upload_product_image', return_value='supabase://products/new-dress.png')
+    @override_settings(
+        SUPABASE_PROJECT_URL='https://shop-example.supabase.co',
+        SUPABASE_STORAGE_BUCKET='product-images',
+    )
+    def test_staff_can_add_product_with_uploaded_image(self, upload_image):
+        user = self.create_staff_user()
+        category = Category.objects.create(category_name='Clothing', slug='clothing')
+        self.client.force_login(user)
+        image_buffer = BytesIO()
+        Image.new('RGB', (1, 1), color='white').save(image_buffer, format='PNG')
+        image = SimpleUploadedFile(
+            'new-dress.png', image_buffer.getvalue(), content_type='image/png'
+        )
+
+        response = self.client.post(
+            reverse('owner-product-add'),
+            {
+                'product_name': 'Summer Dress',
+                'description': 'A light summer dress',
+                'price': '120',
+                'stock': '5',
+                'category': str(category.pk),
+                'is_available': 'on',
+                'images': image,
+            },
+        )
+
+        product = Product.objects.get(product_name='Summer Dress')
+        self.assertRedirects(response, reverse('owner-dashboard'))
+        self.assertEqual(product.slug, 'summer-dress')
+        self.assertEqual(product.stock, 5)
+        self.assertEqual(product.images.name, 'supabase://products/new-dress.png')
+        upload_image.assert_called_once()
 
     def test_product_edit_rejects_negative_price(self):
         user = self.create_staff_user()
@@ -257,4 +302,21 @@ class OwnerDashboardTests(TestCase):
             order_total=80,
             tax=0,
             is_ordered=True,
+        )
+
+
+class ProductMediaStorageTests(TestCase):
+    @override_settings(
+        SUPABASE_PROJECT_URL='https://shop-example.supabase.co',
+        SUPABASE_STORAGE_BUCKET='product-images',
+    )
+    def test_supabase_product_image_uses_public_storage_url(self):
+        from .storage import HybridProductMediaStorage
+
+        storage = HybridProductMediaStorage()
+
+        self.assertEqual(
+            storage.url('supabase://products/red-dress.png'),
+            'https://shop-example.supabase.co/storage/v1/object/public/'
+            'product-images/products/red-dress.png',
         )

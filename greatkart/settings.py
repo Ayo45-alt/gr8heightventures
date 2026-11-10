@@ -96,6 +96,15 @@ STATICFILES_DIRS = [
     BASE_DIR / 'static',
 ]
 
+STORAGES = {
+    'default': {
+        'BACKEND': 'dashboard.storage.HybridProductMediaStorage',
+    },
+    'staticfiles': {
+        'BACKEND': 'django.contrib.staticfiles.storage.StaticFilesStorage',
+    },
+}
+
 
 WSGI_APPLICATION = 'greatkart.wsgi.application'
 
@@ -190,6 +199,11 @@ USE_TZ = True
 # media files configuration
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
+
+SUPABASE_PROJECT_URL = os.getenv('SUPABASE_PROJECT_URL', '').rstrip('/')
+SUPABASE_STORAGE_BUCKET = os.getenv('SUPABASE_STORAGE_BUCKET', '')
+SUPABASE_STORAGE_S3_ENDPOINT = os.getenv('SUPABASE_STORAGE_S3_ENDPOINT', '')
+SUPABASE_STORAGE_S3_REGION = os.getenv('SUPABASE_STORAGE_S3_REGION', '')
 
 
 from django.contrib.messages import constants as messages
