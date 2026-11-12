@@ -1,4 +1,4 @@
-from django.db.models import F
+from django.db import connection
 from django.utils import timezone
 
 from .models import DailyPageView
@@ -14,12 +14,21 @@ class PageViewCounterMiddleware:
         response = self.get_response(request)
 
         if self._should_count(request, response):
-            daily_views, _ = DailyPageView.objects.get_or_create(
-                day=timezone.localdate()
+            table = connection.ops.quote_name(DailyPageView._meta.db_table)
+            day_column = connection.ops.quote_name(
+                DailyPageView._meta.get_field('day').column
             )
-            DailyPageView.objects.filter(pk=daily_views.pk).update(
-                views=F('views') + 1
+            views_column = connection.ops.quote_name(
+                DailyPageView._meta.get_field('views').column
             )
+            with connection.cursor() as cursor:
+                cursor.execute(
+                    f'INSERT INTO {table} ({day_column}, {views_column}) '
+                    f'VALUES (%s, 1) '
+                    f'ON CONFLICT ({day_column}) DO UPDATE SET '
+                    f'{views_column} = {table}.{views_column} + 1',
+                    [timezone.localdate()],
+                )
 
         return response
 

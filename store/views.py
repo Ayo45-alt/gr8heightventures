@@ -2,12 +2,12 @@ import json
 import urllib.parse
 from django.shortcuts import render, get_object_or_404, redirect
 from django.http import JsonResponse
-from .models import Product, ReviewRating, ProductGallery, Wishlist
+from .models import Product, ReviewRating, ProductGallery, Wishlist, Variation
 from category.models import Category
 from cart.models import CartItem
 from cart.views import _cart_id
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
-from django.db.models import Q, Avg, Count
+from django.db.models import Prefetch, Q, Avg, Count
 from django.contrib import messages
 from .forms import ReviewForm
 from .context_processors import _get_session_key
@@ -303,6 +303,17 @@ INVENTORY_BREAKDOWN_CONFIG = {
 }
 
 
+def _active_size_prefetch():
+    return Prefetch(
+        'variation_set',
+        queryset=Variation.objects.filter(
+            variation_category='size',
+            is_active=True,
+        ).order_by('id'),
+        to_attr='active_sizes',
+    )
+
+
 def get_interleaved_catalog():
     """
     Returns all available products starting with our 8 premier showcase items,
@@ -310,7 +321,12 @@ def get_interleaved_catalog():
     so every row of 4 displays a rich variety of categories.
     """
     premier_ids = [238, 206, 183, 197, 168, 209, 185, 160]
-    all_avail = list(Product.objects.filter(is_available=True).select_related('category').order_by('-id'))
+    all_avail = list(
+        Product.objects.filter(is_available=True)
+        .select_related('category')
+        .prefetch_related(_active_size_prefetch())
+        .order_by('-id')
+    )
     by_id = {p.id: p for p in all_avail}
 
     ordered = []
@@ -357,7 +373,9 @@ def store(request, category_slug=None):
                 qs = qs.filter(price__gte=float(min_price), price__lte=float(max_price))
             except ValueError:
                 pass
-        products = list(qs)
+        products = qs.select_related('category').prefetch_related(
+            _active_size_prefetch()
+        )
         category = {
             'category_name': 'All Clothing',
             'slug': 'clothing',
@@ -371,18 +389,20 @@ def store(request, category_slug=None):
                 qs = qs.filter(price__gte=float(min_price), price__lte=float(max_price))
             except ValueError:
                 pass
-        products = list(qs)
+        products = qs.select_related('category').prefetch_related(
+            _active_size_prefetch()
+        )
     else:
         if min_price and max_price:
             try:
                 qs = Product.objects.filter(is_available=True, price__gte=float(min_price), price__lte=float(max_price)).order_by('-id')
-                products = list(qs)
+                products = qs.select_related('category').prefetch_related(
+                    _active_size_prefetch()
+                )
             except ValueError:
                 products = get_interleaved_catalog()
         else:
             products = get_interleaved_catalog()
-
-    product_count = len(products)
 
     # Dynamic pagination:
     # 1. ?all=true -> Show all products at once
@@ -397,6 +417,7 @@ def store(request, category_slug=None):
         per_page = int(request.GET.get('per_page', 36))
 
     paginator = Paginator(products, per_page)
+    product_count = paginator.count
     page = request.GET.get('page')
 
     try:

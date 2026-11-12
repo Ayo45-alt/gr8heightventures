@@ -18,8 +18,8 @@ def wishlist_info(request):
             session_key = _get_session_key(request)
             items = Wishlist.objects.filter(session_id=session_key)
         
-        wishlist_count = items.count()
         wishlist_ids = set(items.values_list('product_id', flat=True))
+        wishlist_count = len(wishlist_ids)
     except Exception:
         wishlist_count = 0
         wishlist_ids = set()

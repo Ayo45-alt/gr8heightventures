@@ -6,6 +6,7 @@ from django.shortcuts import get_object_or_404
 from django.http import HttpResponse, JsonResponse
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib import messages
+from django.db.models import Sum
 from django.views.decorators.http import require_POST
 
 
@@ -21,13 +22,17 @@ def _cart_id(request):
 def _get_cart_count(request):
     """Return total qty of items in the user's cart."""
     if request.user.is_authenticated:
-        items = CartItem.objects.filter(user=request.user, is_active=True)
+        items = CartItem.objects.filter(
+            user=request.user,
+            is_active=True,
+        )
     else:
-        cart = Cart.objects.filter(cart_id=_cart_id(request)).first()
-        if cart is None:
-            return 0
-        items = CartItem.objects.filter(cart=cart, is_active=True)
-    return sum(item.quantity for item in items)
+        cart_id = _cart_id(request)
+        items = CartItem.objects.filter(
+            cart__cart_id=cart_id,
+            is_active=True,
+        )
+    return items.aggregate(total=Sum('quantity'))['total'] or 0
 
 
 def _get_cart_items(request):

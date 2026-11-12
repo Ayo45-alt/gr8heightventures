@@ -1,6 +1,5 @@
-from django.db.models import Case, When, Count, IntegerField, Q
+from django.db.models import Case, When, IntegerField
 from .models import Category
-from store.models import Product
 
 def menu_links(request):
     order = Case(
@@ -12,10 +11,5 @@ def menu_links(request):
         default=5,
         output_field=IntegerField(),
     )
-    links = Category.objects.annotate(
-        prod_count=Count('product', filter=Q(product__is_available=True))
-    ).order_by(order)
-    
-    total_catalog_count = Product.objects.filter(is_available=True).count()
-    all_clothing_count = Product.objects.filter(is_available=True).exclude(category__slug='shoes').count()
-    return dict(links=links, total_catalog_count=total_catalog_count, all_clothing_count=all_clothing_count)
+    links = Category.objects.order_by(order)
+    return {'links': links}

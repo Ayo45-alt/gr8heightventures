@@ -1,5 +1,7 @@
 from django.http import HttpResponse
+from django.db import connection
 from django.test import RequestFactory, TestCase
+from django.test.utils import CaptureQueriesContext
 from django.utils import timezone
 
 from .middleware import PageViewCounterMiddleware
@@ -26,6 +28,16 @@ class PageViewCounterMiddlewareTests(TestCase):
             {field.name for field in DailyPageView._meta.fields},
             {'id', 'day', 'views'},
         )
+
+    def test_increments_daily_views_with_one_atomic_query(self):
+        with CaptureQueriesContext(connection) as queries:
+            self.request('/store/')
+            self.request('/store/')
+
+        record = DailyPageView.objects.get(day=timezone.localdate())
+        self.assertEqual(record.views, 2)
+        self.assertEqual(len(queries), 2)
+        self.assertTrue(all('ON CONFLICT' in query['sql'] for query in queries))
 
     def test_does_not_count_non_page_requests_or_owner_pages(self):
         self.request('/static/css/site.css', accept='text/css')
